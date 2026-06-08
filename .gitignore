@@ -1,0 +1,8 @@
+__pycache__/
+*.csv
+data/
+reseach paper/
+*.jpg
+digital_lending.db
+.venv/
+*.db
