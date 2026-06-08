@@ -6,7 +6,19 @@ import numpy as np
 import sqlite3
 import pandas as pd
 from typing import Optional
+import gdown
+import os
 
+# ── Download DB if not present ───────────────────────────
+DB_PATH = 'digital_lending.db'
+if not os.path.exists(DB_PATH):
+    print("Downloading database...")
+    gdown.download(
+        'https://drive.google.com/uc?id=1kCqmBCDvVwVY8RQ5NDLiVQzfTDZFa5MS',
+        DB_PATH,
+        quiet=False
+    )
+    print("Database downloaded!")
 app = FastAPI(title="Digital Lending Optimization API")
 
 # ── CORS ─────────────────────────────────────────────────
