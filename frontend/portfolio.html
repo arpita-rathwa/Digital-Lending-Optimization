@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Portfolio Intelligence | LendIQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed": "#d9e3f6",
+                    "on-error-container": "#93000a",
+                    "on-error": "#ffffff",
+                    "primary-fixed": "#ffdad8",
+                    "surface-container-highest": "#f7dcdb",
+                    "primary": "#b52330",
+                    "inverse-surface": "#3d2c2c",
+                    "surface": "#fff8f7",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed": "#78fac4",
+                    "on-secondary-fixed": "#121c2a",
+                    "surface-variant": "#f7dcdb",
+                    "surface-tint": "#b52330",
+                    "on-primary-container": "#61000e",
+                    "surface-container": "#ffe9e7",
+                    "secondary-fixed-dim": "#bdc7d9",
+                    "on-primary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "background": "#fff8f7",
+                    "on-primary-fixed": "#410007",
+                    "surface-dim": "#efd4d2",
+                    "surface-container-high": "#fde2e0",
+                    "tertiary": "#006c4c",
+                    "primary-fixed-dim": "#ffb3b0",
+                    "on-primary-fixed-variant": "#92001b",
+                    "inverse-primary": "#ffb3b0",
+                    "on-surface-variant": "#5a403f",
+                    "secondary": "#555f6f",
+                    "on-background": "#261817",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-container": "#003423",
+                    "secondary-container": "#d6e0f3",
+                    "surface-container-low": "#fff0ef",
+                    "outline": "#8e706f",
+                    "surface-bright": "#fff8f7",
+                    "primary-container": "#ff5a5f",
+                    "on-tertiary-fixed": "#002115",
+                    "tertiary-container": "#00a879",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed-dim": "#59ddaa",
+                    "on-surface": "#261817",
+                    "on-secondary-container": "#596373",
+                    "inverse-on-surface": "#ffedeb",
+                    "on-secondary-fixed-variant": "#3d4756",
+                    "on-tertiary-fixed-variant": "#005139",
+                    "outline-variant": "#e2bebc"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "4px",
+                    "gap-lg": "24px",
+                    "gap-md": "16px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "32px",
+                    "sidebar-width": "260px",
+                    "gap-sm": "8px",
+                    "container-padding": "24px",
+                    "gap-xs": "4px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "metric-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "metric-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .card-shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- SideNavBar -->
+<aside class="w-sidebar-width h-screen fixed left-0 top-0 hidden md:flex flex-col h-full py-margin-desktop px-4 bg-secondary-fixed dark:bg-secondary-fixed-dim border-r border-outline-variant z-50">
+<div class="mb-10 px-2 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed">LendIQ</h1>
+<p class="font-label-sm text-label-sm opacity-70">Fintech Solutions</p>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary dark:text-secondary-fixed-dim opacity-60 hover:opacity-100 hover:bg-primary-container/5 transition-all group" href="index.html">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary dark:text-secondary-fixed-dim opacity-60 hover:opacity-100 hover:bg-primary-container/5 transition-all group" href="scorer.html">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body-md text-body-md">Risk Scorer</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-primary dark:text-primary-fixed font-bold bg-primary-container/10 transition-all scale-95 transition-transform group" href="portfolio.html">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<span class="font-body-md text-body-md">Portfolio</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary dark:text-secondary-fixed-dim opacity-60 hover:opacity-100 hover:bg-primary-container/5 transition-all group" href="warnings.html">
+<span class="material-symbols-outlined">warning</span>
+<span class="font-body-md text-body-md">Early Warning</span>
+</a>
+<div class="pt-10">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-secondary dark:text-secondary-fixed-dim opacity-60 hover:opacity-100 hover:bg-primary-container/5 transition-all group" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</div>
+</nav>
+<div class="mt-auto p-4 bg-surface-container-high rounded-2xl flex items-center gap-3 border border-outline-variant">
+<img alt="User Profile" class="w-10 h-10 rounded-full object-cover border-2 border-primary-container" data-alt="A professional headshot of a financial executive in a modern, light-filled office. The individual is wearing a charcoal suit and a crisp white shirt, exuding confidence and expertise. The background is softly blurred, showing a high-end corporate setting with warm wood tones and professional lighting, maintaining the LendIQ brand's high-trust and authoritative aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZmnaSlScdHI2a9_5sauxwqsOzBvW1rm4x8elATw_iov_UbtCRXAufKvYK0SwjHhonFZraPuhj7LG1JCxtbPlDOB-_HIZUXdrSs87Br4Y6OABnR6ou1j4kPOgXTbywkozEoBfIo8FOFLOq4ekLD1MhLONNeDex7kD2JJUGzLjuPvjd_1Em6uaV01nqgG2FiTZt_oOWAGX9cFNOgNG2h2k5A4HI5vb4COZw_nL-OsBOWRKqAv7YqLB7dZlZjPy3IPjBJRmQLsF0PZN3"/>
+<div class="overflow-hidden">
+<p class="font-label-md text-label-md font-bold truncate">David Miller</p>
+<p class="font-label-sm text-label-sm opacity-60 truncate">Chief Risk Officer</p>
+</div>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="flex justify-between items-center w-full px-margin-desktop h-16 ml-0 md:ml-sidebar-width md:w-[calc(100%-260px)] bg-surface dark:bg-surface-dim border-b border-outline-variant shadow-sm sticky top-0 z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-body-md font-body-md focus:ring-2 focus:ring-primary-container transition-all" placeholder="Search portfolio assets..." type="text"/>
+</div>
+<h2 class="md:hidden font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">LendIQ</h2>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<div class="h-8 w-px bg-outline-variant"></div>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary text-on-primary hover:opacity-90 transition-all font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>New Asset</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-0 md:ml-sidebar-width p-margin-mobile md:p-margin-desktop pb-24 md:pb-margin-desktop">
+<!-- Header Section -->
+<header class="mb-8">
+<h1 class="font-headline-lg text-headline-lg font-bold text-on-surface mb-2">Portfolio Intelligence</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Real-time analysis of lending mediums and segment performance across emerging markets.</p>
+</header>
+<!-- Medium Comparison Table -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant card-shadow mb-gap-lg overflow-hidden">
+<div class="p-container-padding border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md">Medium Performance Index</h3>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg font-label-md text-label-md hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                        Filter
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg font-label-md text-label-md hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Export
+                    </button>
+</div>
+</div>
+<div class="overflow-x-auto no-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Rank</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Medium</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider text-right">Total Loans</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Default Rate</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider text-right">Avg Loan</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Health Score</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider text-right">Avg Rate</th>
+</tr>
+</thead>
+<tbody id="medium-table-body" class="divide-y divide-outline-variant font-body-md text-body-md">
+<tr id="table-loading">
+    <td colspan="7" class="px-6 py-12 text-center text-on-surface-variant">
+        <div class="flex items-center justify-center gap-3">
+            <span class="material-symbols-outlined animate-spin text-primary">autorenew</span>
+            <span class="font-label-md">Loading portfolio data...</span>
+        </div>
+    </td>
+</tr>
+<tr id="table-loading">
+    <td colspan="7" class="px-6 py-12 text-center text-on-surface-variant">
+        <div class="flex items-center justify-center gap-3">
+            <span class="material-symbols-outlined animate-spin text-primary">autorenew</span>
+            <span class="font-label-md">Loading portfolio data...</span>
+        </div>
+    </td>
+</tr>
+<tr id="table-loading">
+    <td colspan="7" class="px-6 py-12 text-center text-on-surface-variant">
+        <div class="flex items-center justify-center gap-3">
+            <span class="material-symbols-outlined animate-spin text-primary">autorenew</span>
+            <span class="font-label-md">Loading portfolio data...</span>
+        </div>
+    </td>
+</tr>
+<tr id="table-loading">
+    <td colspan="7" class="px-6 py-12 text-center text-on-surface-variant">
+        <div class="flex items-center justify-center gap-3">
+            <span class="material-symbols-outlined animate-spin text-primary">autorenew</span>
+            <span class="font-label-md">Loading portfolio data...</span>
+        </div>
+    </td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Charts Row -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gap-md mb-gap-lg">
+<!-- Default Rate by Medium -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant card-shadow p-container-padding">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h3 class="font-headline-md text-headline-md mb-1">Default Rate by Medium</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Last 12 months vs Industry Baseline</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">bar_chart</span>
+</div>
+<div class="h-64 w-full flex items-end justify-between px-4 pb-8 border-b border-outline-variant">
+<div class="flex flex-col items-center gap-2 w-16">
+<div class="w-full flex justify-center gap-1">
+<div class="w-4 bg-primary h-24 rounded-t-sm"></div>
+<div class="w-4 bg-secondary-container h-16 rounded-t-sm"></div>
+</div>
+<span class="font-label-sm text-label-sm whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">Agri Coop</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-16">
+<div class="w-full flex justify-center gap-1">
+<div class="w-4 bg-primary h-40 rounded-t-sm"></div>
+<div class="w-4 bg-secondary-container h-28 rounded-t-sm"></div>
+</div>
+<span class="font-label-sm text-label-sm whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">Micro-Retail</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-16">
+<div class="w-full flex justify-center gap-1">
+<div class="w-4 bg-primary h-48 rounded-t-sm"></div>
+<div class="w-4 bg-secondary-container h-32 rounded-t-sm"></div>
+</div>
+<span class="font-label-sm text-label-sm whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">Logistics</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-16">
+<div class="w-full flex justify-center gap-1">
+<div class="w-4 bg-primary h-12 rounded-t-sm"></div>
+<div class="w-4 bg-secondary-container h-20 rounded-t-sm"></div>
+</div>
+<span class="font-label-sm text-label-sm whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">Telecom</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-16">
+<div class="w-full flex justify-center gap-1">
+<div class="w-4 bg-primary h-32 rounded-t-sm"></div>
+<div class="w-4 bg-secondary-container h-24 rounded-t-sm"></div>
+</div>
+<span class="font-label-sm text-label-sm whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">Education</span>
+</div>
+</div>
+<div class="mt-4 flex gap-6 justify-center">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-primary rounded-full"></div>
+<span class="font-label-sm text-label-sm">Portfolio Actual</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-secondary-container rounded-full"></div>
+<span class="font-label-sm text-label-sm">Sector Baseline</span>
+</div>
+</div>
+</div>
+<!-- Risk Tier Distribution -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant card-shadow p-container-padding">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h3 class="font-headline-md text-headline-md mb-1">Risk Tier Distribution</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Concentration by lending partner type</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">pie_chart</span>
+</div>
+<div class="h-64 w-full flex items-end justify-between px-4 pb-8 border-b border-outline-variant">
+<div class="flex flex-col items-center gap-2 w-12">
+<div class="w-8 flex flex-col rounded-sm overflow-hidden h-full">
+<div class="bg-primary h-[20%]"></div>
+<div class="bg-primary-container h-[30%]"></div>
+<div class="bg-tertiary h-[50%]"></div>
+</div>
+<span class="font-label-sm text-label-sm">AGR</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-12">
+<div class="w-8 flex flex-col rounded-sm overflow-hidden h-full">
+<div class="bg-primary h-[10%]"></div>
+<div class="bg-primary-container h-[60%]"></div>
+<div class="bg-tertiary h-[30%]"></div>
+</div>
+<span class="font-label-sm text-label-sm">RET</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-12">
+<div class="w-8 flex flex-col rounded-sm overflow-hidden h-full">
+<div class="bg-primary h-[40%]"></div>
+<div class="bg-primary-container h-[40%]"></div>
+<div class="bg-tertiary h-[20%]"></div>
+</div>
+<span class="font-label-sm text-label-sm">LOG</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-12">
+<div class="w-8 flex flex-col rounded-sm overflow-hidden h-full">
+<div class="bg-primary h-[60%]"></div>
+<div class="bg-primary-container h-[25%]"></div>
+<div class="bg-tertiary h-[15%]"></div>
+</div>
+<span class="font-label-sm text-label-sm">TEL</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-12">
+<div class="w-8 flex flex-col rounded-sm overflow-hidden h-full">
+<div class="bg-primary h-[5%]"></div>
+<div class="bg-primary-container h-[15%]"></div>
+<div class="bg-tertiary h-[80%]"></div>
+</div>
+<span class="font-label-sm text-label-sm">EDU</span>
+</div>
+</div>
+<div class="mt-4 flex gap-6 justify-center">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-primary rounded-full"></div>
+<span class="font-label-sm text-label-sm">High Risk</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-primary-container rounded-full"></div>
+<span class="font-label-sm text-label-sm">Medium Risk</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-tertiary rounded-full"></div>
+<span class="font-label-sm text-label-sm">Low Risk</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Segment Intelligence -->
+<h3 class="font-headline-md text-headline-md mb-4 px-1">Segment Intelligence</h3>
+<div id="segment-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-gap-md">
+<!-- Segment Card 1 -->
+<div class="col-span-full flex items-center justify-center gap-3 py-12 text-on-surface-variant" id="segments-loading">
+    <span class="material-symbols-outlined animate-spin text-primary">autorenew</span>
+    <span class="font-label-md">Loading segments...</span>
+</div>
+<!-- Segment Card 2 -->
+<div class="col-span-full flex items-center justify-center gap-3 py-12 text-on-surface-variant" id="segments-loading">
+    <span class="material-symbols-outlined animate-spin text-primary">autorenew</span>
+    <span class="font-label-md">Loading segments...</span>
+</div>
+<!-- Segment Card 3 -->
+<div class="col-span-full flex items-center justify-center gap-3 py-12 text-on-surface-variant" id="segments-loading">
+    <span class="material-symbols-outlined animate-spin text-primary">autorenew</span>
+    <span class="font-label-md">Loading segments...</span>
+</div>
+<!-- Segment Card 4 -->
+<div class="col-span-full flex items-center justify-center gap-3 py-12 text-on-surface-variant" id="segments-loading">
+    <span class="material-symbols-outlined animate-spin text-primary">autorenew</span>
+    <span class="font-label-md">Loading segments...</span>
+</div>
+<!-- Segment Card 5 -->
+<div class="col-span-full flex items-center justify-center gap-3 py-12 text-on-surface-variant" id="segments-loading">
+    <span class="material-symbols-outlined animate-spin text-primary">autorenew</span>
+    <span class="font-label-md">Loading segments...</span>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-margin-mobile py-2 bg-surface dark:bg-surface-dim border-t border-outline-variant shadow-lg rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-secondary" href="index.html">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary" href="scorer.html">
+<span class="material-symbols-outlined">speed</span>
+<span class="font-label-sm text-label-sm">Score</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-2xl px-4 py-1 scale-90 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">pie_chart</span>
+<span class="font-label-sm text-label-sm">Portfolio</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary" href="warnings.html">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-sm text-label-sm">Alerts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-sm text-label-sm">Settings</span>
+</a>
+</nav>
+<script>
+        // Micro-interactions and data visualization highlights
+        document.querySelectorAll('.group').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.style.transform = 'translateX(4px)';
+                row.style.transition = 'transform 0.2s ease-out';
+            });
+            row.addEventListener('mouseleave', () => {
+                row.style.transform = 'translateX(0)';
+            });
+        });
+
+        // Simulating interactive cards
+        document.querySelectorAll('.cursor-pointer').forEach(card => {
+            card.addEventListener('mousedown', () => {
+                card.style.transform = 'scale(0.98)';
+            });
+            card.addEventListener('mouseup', () => {
+                card.style.transform = 'scale(1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+    <script src="js/api.js"></script>
+    <script src="js/portfolio.js"></script>
+</body>
+</body></html>
