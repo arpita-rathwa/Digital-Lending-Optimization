@@ -14,14 +14,12 @@ async function loadWarningsPage() {
     const critEl = document.getElementById('summary-critical');
     const warnEl = document.getElementById('summary-warning');
     const watchEl = document.getElementById('summary-watch');
-    const totalEl = document.getElementById('summary-total');
+    const healthyEl = document.getElementById('summary-healthy');
 
     if (critEl) critEl.textContent = (dist.CRITICAL || 0).toLocaleString();
     if (warnEl) warnEl.textContent = (dist.WARNING || 0).toLocaleString();
     if (watchEl) watchEl.textContent = (dist.WATCH || 0).toLocaleString();
-    if (totalEl) totalEl.textContent = Object.values(dist).reduce((a, b) => a + b, 0).toLocaleString();
-
-    renderTable(allWarnings);
+    if (healthyEl) healthyEl.textContent =(dist.HEALTHY || 0).toLocaleString();
 }
 
 function renderTable(warnings) {
@@ -100,3 +98,5 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btn) btn.addEventListener('click', () => filterWarnings(level));
     });
 });
+
+    -updating warnings.js

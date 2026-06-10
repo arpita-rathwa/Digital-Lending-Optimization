@@ -223,7 +223,7 @@
 </div>
 <div class="flex flex-col gap-1 min-w-[160px]">
 <label class="font-label-md text-label-md text-on-surface-variant ml-1">Medium</label>
-<select class="bg-surface border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:ring-2 focus:ring-primary/20 outline-none">
+<select id="filter-level" class="bg-surface border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:ring-2 focus:ring-primary/20 outline-none"></select> class="bg-surface border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:ring-2 focus:ring-primary/20 outline-none">
 <option>All Mediums</option>
 <option>SME Micro</option>
 <option>Consumer Payday</option>
@@ -250,7 +250,7 @@
 <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Critical</p>
 <span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">error</span>
 </div>
-<p class="font-metric-lg text-metric-lg text-on-surface">14</p>
+<p class="font-metric-lg text-metric-lg text-on-surface" id="summary-critical">14</p>
 <p class="text-label-sm text-error flex items-center gap-1 mt-1">
 <span class="material-symbols-outlined text-[14px]">trending_up</span>
                     +3 this week
@@ -261,7 +261,7 @@
 <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Warning</p>
 <span class="material-symbols-outlined text-primary">warning</span>
 </div>
-<p class="font-metric-lg text-metric-lg text-on-surface">38</p>
+<p class="font-metric-lg text-metric-lg text-on-surface" id="summary-warning">38</p>
 <p class="text-label-sm text-secondary flex items-center gap-1 mt-1">
 <span class="material-symbols-outlined text-[14px]">trending_flat</span>
                     Stable
@@ -272,7 +272,7 @@
 <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Watch</p>
 <span class="material-symbols-outlined text-secondary">visibility</span>
 </div>
-<p class="font-metric-lg text-metric-lg text-on-surface">112</p>
+<p class="font-metric-lg text-metric-lg text-on-surface" id="summary-watch">112</p>
 <p class="text-label-sm text-tertiary flex items-center gap-1 mt-1">
 <span class="material-symbols-outlined text-[14px]">trending_down</span>
                     -8 improvement
@@ -283,7 +283,7 @@
 <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Healthy</p>
 <span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
 </div>
-<p class="font-metric-lg text-metric-lg text-on-surface">2,481</p>
+<p class="font-metric-lg text-metric-lg text-on-surface" id="summary-healthy" >2,481</p>
 <p class="text-label-sm text-tertiary flex items-center gap-1 mt-1">
 <span class="material-symbols-outlined text-[14px]">trending_up</span>
                     +42 onboarding
@@ -313,163 +313,60 @@
 <th class="px-6 py-4"></th>
 </tr>
 </thead>
-<tbody class="divide-y divide-outline-variant/30">
+<tbody class="divide-y divide-outline-variant/30" id="warning-table-body">
 <!-- Row 1 -->
-<tr class="hover:bg-surface-container-high transition-colors">
-<td class="px-6 py-5 font-body-md text-body-md font-bold text-on-surface">#1</td>
-<td class="px-6 py-5">
-<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-sm text-label-sm">SME Micro</span>
-</td>
-<td class="px-6 py-5 font-body-md text-body-md text-on-surface">$12,450.00</td>
-<td class="px-6 py-5">
-<div class="flex flex-col gap-1 w-24">
-<span class="font-label-sm text-label-sm text-on-surface-variant">84.2%</span>
-<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
-<div class="h-full bg-error rounded-full" style="width: 84.2%;"></div>
-</div>
-</div>
-</td>
-<td class="px-6 py-5">
-<span class="text-error font-bold font-body-md text-body-md">Tier 5 (E)</span>
-</td>
-<td class="px-6 py-5 font-body-md text-body-md text-on-surface">24.5%</td>
-<td class="px-6 py-5">
-<span class="bg-error/10 text-error px-2 py-1 rounded-md font-label-md text-label-md font-bold">CRITICAL</span>
-</td>
-<td class="px-6 py-5">
-<div class="flex gap-1">
-<span class="material-symbols-outlined text-error text-[20px]" title="Delinquency">event_busy</span>
-<span class="material-symbols-outlined text-primary text-[20px]" title="Market Shift">trending_down</span>
-</div>
-</td>
-<td class="px-6 py-5 text-right">
-<button class="text-primary font-label-md text-label-md hover:underline">Review</button>
-</td>
+<tbody class="divide-y divide-outline-variant/30" id="warning-table-body">
+<tr id="table-loading">
+    <td colspan="9" class="px-6 py-12 text-center text-on-surface-variant">
+        <div class="flex items-center justify-center gap-3">
+            <span class="material-symbols-outlined animate-spin text-primary">autorenew</span>
+            <span class="font-label-md">Loading warning queue...</span>
+        </div>
+    </td>
 </tr>
+</tbody>
 <!-- Row 2 -->
-<tr class="hover:bg-surface-container-high transition-colors">
-<td class="px-6 py-5 font-body-md text-body-md font-bold text-on-surface">#2</td>
-<td class="px-6 py-5">
-<span class="bg-tertiary-container/20 text-on-tertiary-container px-3 py-1 rounded-full font-label-sm text-label-sm">Agri-Business</span>
-</td>
-<td class="px-6 py-5 font-body-md text-body-md text-on-surface">$45,000.00</td>
-<td class="px-6 py-5">
-<div class="flex flex-col gap-1 w-24">
-<span class="font-label-sm text-label-sm text-on-surface-variant">61.5%</span>
-<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
-<div class="h-full bg-primary rounded-full" style="width: 61.5%;"></div>
-</div>
-</div>
-</td>
-<td class="px-6 py-5">
-<span class="text-primary font-bold font-body-md text-body-md">Tier 4 (D)</span>
-</td>
-<td class="px-6 py-5 font-body-md text-body-md text-on-surface">18.2%</td>
-<td class="px-6 py-5">
-<span class="bg-primary/10 text-primary px-2 py-1 rounded-md font-label-md text-label-md font-bold">WARNING</span>
-</td>
-<td class="px-6 py-5">
-<div class="flex gap-1">
-<span class="material-symbols-outlined text-secondary text-[20px]" title="Reduced Cashflow">payments</span>
-</div>
-</td>
-<td class="px-6 py-5 text-right">
-<button class="text-primary font-label-md text-label-md hover:underline">Review</button>
-</td>
+<tbody class="divide-y divide-outline-variant/30" id="warning-table-body">
+<tr id="table-loading">
+    <td colspan="9" class="px-6 py-12 text-center text-on-surface-variant">
+        <div class="flex items-center justify-center gap-3">
+            <span class="material-symbols-outlined animate-spin text-primary">autorenew</span>
+            <span class="font-label-md">Loading warning queue...</span>
+        </div>
+    </td>
 </tr>
+</tbody>
 <!-- Row 3 -->
-<tr class="hover:bg-surface-container-high transition-colors">
-<td class="px-6 py-5 font-body-md text-body-md font-bold text-on-surface">#3</td>
-<td class="px-6 py-5">
-<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-sm text-label-sm">Consumer Payday</span>
-</td>
-<td class="px-6 py-5 font-body-md text-body-md text-on-surface">$1,200.00</td>
-<td class="px-6 py-5">
-<div class="flex flex-col gap-1 w-24">
-<span class="font-label-sm text-label-sm text-on-surface-variant">32.8%</span>
-<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
-<div class="h-full bg-secondary rounded-full" style="width: 32.8%;"></div>
-</div>
-</div>
-</td>
-<td class="px-6 py-5">
-<span class="text-secondary font-bold font-body-md text-body-md">Tier 3 (C)</span>
-</td>
-<td class="px-6 py-5 font-body-md text-body-md text-on-surface">12.5%</td>
-<td class="px-6 py-5">
-<span class="bg-secondary/10 text-secondary px-2 py-1 rounded-md font-label-md text-label-md font-bold">WATCH</span>
-</td>
-<td class="px-6 py-5">
-<div class="flex gap-1">
-<span class="material-symbols-outlined text-secondary-fixed-dim text-[20px]" title="Info">info</span>
-</div>
-</td>
-<td class="px-6 py-5 text-right">
-<button class="text-primary font-label-md text-label-md hover:underline">Review</button>
-</td>
+<tbody class="divide-y divide-outline-variant/30" id="warning-table-body">
+<tr id="table-loading">
+    <td colspan="9" class="px-6 py-12 text-center text-on-surface-variant">
+        <div class="flex items-center justify-center gap-3">
+            <span class="material-symbols-outlined animate-spin text-primary">autorenew</span>
+            <span class="font-label-md">Loading warning queue...</span>
+        </div>
+    </td>
 </tr>
+</tbody>
 <!-- Row 4 -->
-<tr class="hover:bg-surface-container-high transition-colors">
-<td class="px-6 py-5 font-body-md text-body-md font-bold text-on-surface">#4</td>
-<td class="px-6 py-5">
-<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-sm text-label-sm">SME Micro</span>
-</td>
-<td class="px-6 py-5 font-body-md text-body-md text-on-surface">$8,900.00</td>
-<td class="px-6 py-5">
-<div class="flex flex-col gap-1 w-24">
-<span class="font-label-sm text-label-sm text-on-surface-variant">78.1%</span>
-<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
-<div class="h-full bg-error rounded-full" style="width: 78.1%;"></div>
-</div>
-</div>
-</td>
-<td class="px-6 py-5">
-<span class="text-error font-bold font-body-md text-body-md">Tier 5 (E)</span>
-</td>
-<td class="px-6 py-5 font-body-md text-body-md text-on-surface">22.0%</td>
-<td class="px-6 py-5">
-<span class="bg-error/10 text-error px-2 py-1 rounded-md font-label-md text-label-md font-bold">CRITICAL</span>
-</td>
-<td class="px-6 py-5">
-<div class="flex gap-1">
-<span class="material-symbols-outlined text-error text-[20px]">warning</span>
-<span class="material-symbols-outlined text-on-error-container text-[20px]">person_off</span>
-</div>
-</td>
-<td class="px-6 py-5 text-right">
-<button class="text-primary font-label-md text-label-md hover:underline">Review</button>
-</td>
+<tbody class="divide-y divide-outline-variant/30" id="warning-table-body">
+<tr id="table-loading">
+    <td colspan="9" class="px-6 py-12 text-center text-on-surface-variant">
+        <div class="flex items-center justify-center gap-3">
+            <span class="material-symbols-outlined animate-spin text-primary">autorenew</span>
+            <span class="font-label-md">Loading warning queue...</span>
+        </div>
+    </td>
 </tr>
+</tbody>
 <!-- Row 5 -->
-<tr class="hover:bg-surface-container-high transition-colors">
-<td class="px-6 py-5 font-body-md text-body-md font-bold text-on-surface">#5</td>
-<td class="px-6 py-5">
-<span class="bg-tertiary-container/20 text-on-tertiary-container px-3 py-1 rounded-full font-label-sm text-label-sm">Vehicle Finance</span>
-</td>
-<td class="px-6 py-5 font-body-md text-body-md text-on-surface">$22,300.00</td>
-<td class="px-6 py-5">
-<div class="flex flex-col gap-1 w-24">
-<span class="font-label-sm text-label-sm text-on-surface-variant">15.4%</span>
-<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
-<div class="h-full bg-tertiary rounded-full" style="width: 15.4%;"></div>
-</div>
-</div>
-</td>
-<td class="px-6 py-5">
-<span class="text-tertiary font-bold font-body-md text-body-md">Tier 1 (A)</span>
-</td>
-<td class="px-6 py-5 font-body-md text-body-md text-on-surface">7.5%</td>
-<td class="px-6 py-5">
-<span class="bg-tertiary/10 text-tertiary px-2 py-1 rounded-md font-label-md text-label-md font-bold">HEALTHY</span>
-</td>
-<td class="px-6 py-5">
-<div class="flex gap-1 text-on-surface-variant">
-                                    —
-                                </div>
-</td>
-<td class="px-6 py-5 text-right">
-<button class="text-primary font-label-md text-label-md hover:underline">Review</button>
-</td>
+<tbody class="divide-y divide-outline-variant/30" id="warning-table-body">
+<tr id="table-loading">
+    <td colspan="9" class="px-6 py-12 text-center text-on-surface-variant">
+        <div class="flex items-center justify-center gap-3">
+            <span class="material-symbols-outlined animate-spin text-primary">autorenew</span>
+            <span class="font-label-md">Loading warning queue...</span>
+        </div>
+    </td>
 </tr>
 </tbody>
 </table>
