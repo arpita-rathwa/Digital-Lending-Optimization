@@ -29,6 +29,54 @@ async function loadDashboard() {
         if (defMedEl) defMedEl.textContent = `Def: ${(h.default_rate * 100).toFixed(1)}%`;
     });
 
+    // ── Segment Donut Chart ────────────────────────────────
+    if (data.segments) {
+        const colors = ['#b52330', '#ff5a5f', '#22c55e', '#3b82f6', '#f59e0b'];
+
+        const ctx = document.getElementById('segmentDonut');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.segments.map(s => s.segment),
+                    datasets: [{
+                        data: data.segments.map(s => s.total_loans),
+                        backgroundColor: colors,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    cutout: '70%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    return `${ctx.label}: ${ctx.parsed.toLocaleString()} loans`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Custom legend
+        const legend = document.getElementById('segment-legend');
+        if (legend) {
+            const total = data.segments.reduce((a, b) => a + b.total_loans, 0);
+            legend.innerHTML = data.segments.map((s, i) => `
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full flex-shrink-0" style="background:${colors[i]}"></div>
+                        <span class="text-label-md text-on-surface-variant">${s.segment}</span>
+                    </div>
+                    <span class="text-label-md font-bold">${((s.total_loans / total) * 100).toFixed(0)}%</span>
+                </div>
+            `).join('');
+        }
+    }
+
     // ── Early Warning Summary ─────────────────────────────
     const warnData = await fetchWarnings();
     if (warnData) {

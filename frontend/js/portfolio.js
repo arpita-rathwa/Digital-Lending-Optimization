@@ -87,6 +87,97 @@ async function loadPortfolioPage() {
             </div>`;
         }).join('');
     }
+
+    // ── Default Rate by Medium Chart ───────────────────────
+    const defCtx = document.getElementById('defaultRateChart');
+    if (defCtx) {
+        const sorted = [...data.medium_summary].sort((a, b) => b.default_rate - a.default_rate);
+        new Chart(defCtx, {
+            type: 'bar',
+            data: {
+                labels: sorted.map(m => m.lending_medium),
+                datasets: [{
+                    label: 'Default Rate %',
+                    data: sorted.map(m => (m.default_rate * 100).toFixed(1)),
+                    backgroundColor: '#b52330',
+                    borderRadius: 6,
+                    maxBarThickness: 60
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: { label: ctx => `Default Rate: ${ctx.parsed.y}%` }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { callback: v => v + '%' },
+                        grid: { color: '#f7dcdb' }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    // ── Health Score / Risk Distribution Chart ─────────────
+    const riskCtx = document.getElementById('riskTierChart');
+    if (riskCtx) {
+        const sorted = [...data.health_scores].sort((a, b) => b.health_score - a.health_score);
+        new Chart(riskCtx, {
+            type: 'bar',
+            data: {
+                labels: sorted.map(h => h.lending_medium),
+                datasets: [{
+                    label: 'Health Score',
+                    data: sorted.map(h => h.health_score),
+                    backgroundColor: sorted.map(h =>
+                        h.health_score >= 80 ? '#006c4c' : h.health_score >= 60 ? '#ff5a5f' : '#b52330'
+                    ),
+                    borderRadius: 6,
+                    maxBarThickness: 60
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: { label: ctx => `Health Score: ${ctx.parsed.y}` }
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, max: 100, grid: { color: '#f7dcdb' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    // ── SHAP Feature Importance (if container exists) ──────
+    const shapContainer = document.getElementById('shap-features');
+    if (shapContainer) {
+        const shapData = await fetchShap();
+        if (shapData && shapData.length) {
+            const maxImp = shapData[0].importance;
+            shapContainer.innerHTML = shapData.slice(0, 10).map((f, i) => `
+                <div class="flex items-center gap-3 py-2">
+                    <span class="text-label-sm text-on-surface-variant w-4">${i+1}</span>
+                    <span class="text-body-md font-medium flex-1">${f.feature}</span>
+                    <div class="w-32 h-2 bg-surface-container rounded-full overflow-hidden">
+                        <div class="h-full rounded-full bg-primary" style="width:${(f.importance/maxImp*100).toFixed(0)}%"></div>
+                    </div>
+                    <span class="text-label-md font-bold text-primary w-16 text-right">${f.importance.toFixed(3)}</span>
+                </div>
+            `).join('');
+        }
+    }
 }
 
 document.addEventListener('DOMContentLoaded', loadPortfolioPage);
