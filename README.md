@@ -1,7 +1,7 @@
 # 💳 Digital Lending Optimization
 ### LendIQ — Multi-Medium Lending Intelligence & Decision Optimization Platform
 
-[![Live API](https://img.shields.io/badge/Live%20API-FastAPI-009688?style=for-the-badge&logo=fastapi)](https://venerable-marshmallow-ea0d35.netlify.app/)
+[![Live API](https://img.shields.io/badge/Live%20API-FastAPI-009688?style=for-the-badge&logo=fastapi)](https://digital-lending-api.onrender.com/)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/arpita-rathwa/Digital-Lending-Optimization)
 
 > An end-to-end digital lending intelligence system spanning 4 lending mediums (P2P, Bank, Microfinance, SME) and 765,140 loans — combining risk prediction, borrower segmentation, and a full optimization layer (approval thresholds, dynamic pricing, portfolio health scoring, early warning) into a deployed full-stack platform with a FastAPI backend and an interactive LendIQ frontend.
@@ -13,7 +13,7 @@
 
 > An end-to-end digital lending intelligence system spanning 4 lending mediums (P2P, Bank, Microfinance, SME) and 765,140 loans — combining risk prediction, borrower segmentation, and a full optimization layer (approval thresholds, dynamic pricing, portfolio health scoring, early warning) into a deployed full-stack platform with a FastAPI backend and an interactive LendIQ frontend.
 
-**🚀 [Try the live API →](https://digital-lending-api.onrender.com/docs)**
+**🚀 [Try the live →](https://venerable-marshmallow-ea0d35.netlify.app/)**
 
 ---
 
