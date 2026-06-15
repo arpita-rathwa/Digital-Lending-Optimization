@@ -1,8 +1,8 @@
 # 💳 Digital Lending Optimization
 ### LendIQ — Multi-Medium Lending Intelligence & Decision Optimization Platform
 
-[![Live API](https://img.shields.io/badge/Live%20API-FastAPI-009688?style=for-the-badge&logo=fastapi)](https://digital-lending-api.onrender.com/)
-[![Live App](https://img.shields.io/badge/Live%20App-LendIQ-FF5A5F?style=for-the-badge&logo=netlify)](https://tranquil-cendol-e10514.netlify.app/scorer)
+[![Live API](https://img.shields.io/badge/Live%20API-FastAPI-009688?style=for-the-badge&logo=fastapi)](https://digital-lending-optimization-1.onrender.com)
+[![Live App](https://img.shields.io/badge/Live%20App-LendIQ-FF5A5F?style=for-the-badge&logo=netlify)](https://stunning-entremet-5ad620.netlify.app/scorer)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/arpita-rathwa/Digital-Lending-Optimization)
 
 > An end-to-end digital lending intelligence system spanning 4 lending mediums (P2P, Bank, Microfinance, SME) and 765,140 loans — combining risk prediction, borrower segmentation, and a full optimization layer (approval thresholds, dynamic pricing, portfolio health scoring, early warning) into a deployed full-stack platform with a FastAPI backend and an interactive LendIQ frontend.
@@ -135,10 +135,10 @@ The dataset is heavily imbalanced — only **4% of loans default**. A naive mode
 | Model | Accuracy | Default Recall | Default F1 |
 |---|---|---|---|
 | Random Forest | 96.43% | 15% | 0.24 |
-| **XGBoost** | **88.54%** | **68%** ✅ | **0.32** |
+| **XGBoost** | **85.18%** | **80%** ✅ | **0.30** |
 | Logistic Regression | 88.93% | — | — |
 
-> Random Forest has higher accuracy but catches only 15% of actual defaulters — useless for a lender. XGBoost trades 8 points of accuracy for **4.5× better default recall**.
+> Random Forest has higher accuracy but catches only 15% of actual defaulters — useless for a lender. XGBoost trades ~11 points of accuracy for **5.3× better default recall**.
 
 ### Task 2 — Risk Tier Classification (Multi-class)
 XGBoost selected as the risk-tiering model.
@@ -261,7 +261,7 @@ Each loan is flagged based on the count of active stress signals (high default p
 
 ## Phase 6 — FastAPI Backend
 
-Deployed live on Render: **[digital-lending-api.onrender.com](https://digital-lending-api.onrender.com/)**
+Deployed live on Render: **[digital-lending-optimization-1.onrender.com](https://digital-lending-optimization-1.onrender.com)**
 
 The 255MB SQLite database is hosted on Google Drive and downloaded at runtime via `gdown` on server startup. If the download fails (e.g., on a cold start that times out), the `/` endpoint returns a clear error message instead of crashing.
 
@@ -276,15 +276,15 @@ The 255MB SQLite database is hosted on Google Drive and downloaded at runtime vi
 ### Example `/predict` Response
 ```json
 {
-  "approval": { "approved": true, "decision": "APPROVED", "confidence": 0.7164 },
+  "approval": { "approved": false, "decision": "DECLINED", "confidence": 0.2325, "threshold_used": 0.5, "threshold_type": "individual" },
   "risk": {
-    "default_probability": 0.2836,
-    "risk_tier": "Medium",
-    "expected_loss": 752.78,
+    "default_probability": 0.7675,
+    "risk_tier": "High",
+    "expected_loss": 281.68,
     "early_warning": "WATCH",
     "warning_flags": ["HIGH_DEFAULT_RISK"]
   },
-  "pricing": { "recommended_rate": 22.58, "current_rate": 11, "rate_adjustment": 11.58 },
+  "pricing": { "recommended_rate": 30.6, "current_rate": 11.0, "rate_adjustment": 19.6 },
   "segment": { "cluster": 3, "name": "Urban Established" }
 }
 ```
@@ -390,6 +390,7 @@ Digital-Lending-Optimization/
 **Model Level**
 - ~~Fix risk_tier inconsistency~~ — **DONE**: `risk_tier` now derived from `default_probability` thresholds
 - ~~Stricter individual approval threshold~~ — **DONE**: dual-threshold system (0.50 individual, 0.78 batch)
+- ~~Fix training/inference encoding mismatch~~ — **DONE**: replaced `cat.codes` with fixed `HOME_OWNERSHIP_MAP` + regularized retraining
 - Hyperparameter tuning via Optuna across all XGBoost models
 - LightGBM as a faster alternative to XGBoost on the 671k-row Microfinance segment
 - Probability calibration (Platt / isotonic) with reliability diagram
