@@ -19,10 +19,14 @@ from fastapi.testclient import TestClient
 
 from lendiql.app import app
 
-client = TestClient(app)
+
+@pytest.fixture
+def client():
+    with TestClient(app) as c:
+        yield c
 
 
-def test_root_returns_200():
+def test_root_returns_200(client):
     r = client.get("/")
     assert r.status_code == 200
     body = r.json()
@@ -30,7 +34,7 @@ def test_root_returns_200():
     assert "status" in body
 
 
-def test_predict_response_shape():
+def test_predict_response_shape(client):
     payload = {
         "loan_amount": 15_000,
         "term_months": 36,
@@ -77,7 +81,7 @@ def test_predict_response_shape():
     assert "name" in body["segment"]
 
 
-def test_risk_tier_matches_probability():
+def test_risk_tier_matches_probability(client):
     payload = {
         "loan_amount": 15_000,
         "term_months": 36,
@@ -106,7 +110,7 @@ def test_risk_tier_matches_probability():
         assert tier == "High", f"p={p} should be High, got {tier}"
 
 
-def test_approval_decision_matches_threshold():
+def test_approval_decision_matches_threshold(client):
     payload = {
         "loan_amount": 200_000,
         "term_months": 60,
@@ -132,15 +136,18 @@ def test_approval_decision_matches_threshold():
         assert body["approval"]["decision"] == "DECLINED"
 
 
-def test_invalid_payload_rejected():
+def test_invalid_payload_rejected(client):
     r = client.post("/predict", json={"loan_amount": "not a number"})
     assert r.status_code == 422
 
 
-def test_early_warning_limit_param():
+def test_early_warning_limit_param(client):
     r = client.get("/early-warning?limit=10")
     if r.status_code == 200:
         body = r.json()
         assert "queue" in body
         assert "distribution" in body
         assert len(body["queue"]) <= 10
+
+
+

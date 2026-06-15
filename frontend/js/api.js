@@ -4,7 +4,7 @@
 //     window.API_BASE = 'http://localhost:8000';
 const API_BASE = (typeof window !== 'undefined' && window.API_BASE)
     ? window.API_BASE
-    : 'https://digital-lending-api.onrender.com';
+    : 'https://digital-lending-optimization-1.onrender.com';
 
 // ── Fetch Portfolio Data ──────────────────────────────────
 async function fetchPortfolio() {
