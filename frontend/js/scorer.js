@@ -148,7 +148,25 @@ async function assessRiskHandler() {
         btn.innerHTML = '<span class="material-symbols-outlined">bolt</span> ASSESS RISK';
     }
 
-    if (result) showResults(result);
+    if (!result) {
+        const warnEl = document.getElementById('result-warning');
+        if (warnEl) {
+            warnEl.textContent = 'Error: Could not reach the API. Is the backend running?';
+            warnEl.className = 'font-bold text-body-md text-error';
+        }
+        return;
+    }
+
+    if (result.detail) {
+        const warnEl = document.getElementById('result-warning');
+        if (warnEl) {
+            warnEl.textContent = 'API Error: ' + result.detail;
+            warnEl.className = 'font-bold text-body-md text-error';
+        }
+        return;
+    }
+
+    showResults(result);
 }
 
 document.addEventListener('DOMContentLoaded', () => {

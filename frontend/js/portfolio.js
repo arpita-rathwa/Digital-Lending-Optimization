@@ -2,7 +2,16 @@
 
 async function loadPortfolioPage() {
     const data = await fetchPortfolio();
-    if (!data) return;
+    if (!data) {
+        const loading = document.getElementById('table-loading');
+        if (loading) loading.innerHTML = '<td colspan="7" class="px-6 py-12 text-center text-on-surface-variant">Failed to load portfolio data</td>';
+        return;
+    }
+    // Hide loading indicators
+    const tableLoading = document.getElementById('table-loading');
+    if (tableLoading) tableLoading.style.display = 'none';
+    const segLoading = document.getElementById('segments-loading');
+    if (segLoading) segLoading.style.display = 'none';
 
     // ── Medium Comparison Table ───────────────────────────
     const tableBody = document.getElementById('medium-table-body');

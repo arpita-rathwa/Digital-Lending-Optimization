@@ -20,6 +20,10 @@ async function loadWarningsPage() {
     if (watchEl) watchEl.textContent = (dist.WATCH || 0).toLocaleString();
     if (healthyEl) healthyEl.textContent = (dist.HEALTHY || 0).toLocaleString();
 
+    // Hide loading indicator
+    const tableLoading = document.getElementById('table-loading');
+    if (tableLoading) tableLoading.style.display = 'none';
+
     renderTable(allWarnings);
 }
 
