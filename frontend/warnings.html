@@ -213,12 +213,12 @@
 <div class="bg-surface rounded-xl border border-outline-variant p-4 mb-6 shadow-sm flex flex-wrap items-center gap-4">
 <div class="flex flex-col gap-1 min-w-[160px]">
 <label class="font-label-md text-label-md text-on-surface-variant ml-1">Warning Level</label>
-<select class="bg-surface border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:ring-2 focus:ring-primary/20 outline-none">
-<option>All Levels</option>
-<option class="text-error">CRITICAL</option>
-<option class="text-primary">WARNING</option>
-<option class="text-secondary">WATCH</option>
-<option class="text-tertiary">HEALTHY</option>
+<select id="filter-level" class="bg-surface border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:ring-2 focus:ring-primary/20 outline-none">
+<option value="ALL">All Levels</option>
+<option value="CRITICAL" class="text-error">CRITICAL</option>
+<option value="WARNING" class="text-primary">WARNING</option>
+<option value="WATCH" class="text-secondary">WATCH</option>
+<option value="HEALTHY" class="text-tertiary">HEALTHY</option>
 </select>
 </div>
 <div class="flex flex-col gap-1 min-w-[160px]">
