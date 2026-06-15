@@ -1,0 +1,21 @@
+lending_medium,loan_size,credit_tier,loan_count,default_rate_pct,avg_loan,avg_rate,avg_loss
+Bank,Medium,Unknown,1594,100.0,21676.29,13.53,14124.97
+Bank,Micro,Unknown,1941,100.0,3438.16,12.7,2243.46
+Bank,Small,Unknown,3573,100.0,10047.55,12.67,6555.13
+Microfinance,Micro,Unknown,9826,100.0,1387.19,10.65,904.45
+Microfinance,Small,Unknown,566,100.0,8739.05,10.65,5706.74
+P2P,Medium,Exceptional,10,100.0,24400.0,11.68,15196.12
+P2P,Medium,Fair,143,100.0,22483.92,20.26,14756.22
+P2P,Medium,Good,1144,100.0,22468.42,16.11,14540.06
+P2P,Medium,Very Good,340,100.0,23645.59,12.04,15570.13
+P2P,Micro,Exceptional,9,100.0,2750.0,7.22,1779.3
+P2P,Micro,Fair,212,100.0,3473.94,15.94,2284.35
+P2P,Micro,Good,957,100.0,3457.29,12.57,2244.4
+P2P,Micro,Very Good,139,100.0,3595.86,8.6,2288.08
+P2P,Small,Exceptional,14,100.0,9567.86,9.74,6473.9
+P2P,Small,Fair,329,100.0,9752.74,17.19,6239.46
+P2P,Small,Good,1970,100.0,9992.78,13.48,6505.1
+P2P,Small,Very Good,399,100.0,10107.64,9.6,6547.8
+SME,Large,Exceptional,159,100.0,350032.73,7.96,234280.13
+SME,Large,Fair,2593,100.0,347958.84,7.97,226939.79
+SME,Large,Good,2664,100.0,340520.45,8.04,220219.13

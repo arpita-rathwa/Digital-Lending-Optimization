@@ -294,7 +294,10 @@ The 255MB SQLite database is hosted on Google Drive and downloaded at runtime vi
 ### Local Development
 
 ```bash
-# Install dependencies
+# Install dependencies (editable install recommended for dev)
+pip install -e ".[dev]"
+
+# Or using requirements.txt directly
 pip install -r requirements.txt
 
 # Run tests
@@ -341,15 +344,31 @@ All data is fetched live from the Render API — no hardcoded values.
 
 ```
 Digital-Lending-Optimization/
-├── main.py                      # FastAPI app
-├── ml_pipeline.ipynb            # End-to-end ML + optimization notebook
+├── src/
+│   └── lendiql/                 # Python package
+│       ├── __init__.py          # Package marker & version
+│       ├── config.py            # Central configuration (thresholds, maps)
+│       ├── schemas.py           # Pydantic request models
+│       ├── features.py          # Feature engineering
+│       ├── pricing.py           # Pricing engine
+│       ├── early_warning.py     # Early warning & risk tier derivation
+│       ├── models.py            # Model loading / lazy init
+│       ├── app.py               # FastAPI app & endpoints
+│       └── main.py              # Entry point (uvicorn)
+├── main.py                      # Backward-compat re-export (``main:app``)
+├── pyproject.toml               # Project metadata & tool config
 ├── requirements.txt
 ├── README.md
+├── Dockerfile
+├── .env.example
 ├── .gitignore
+├── .github/
+│   └── workflows/
+│       └── ci.yml               # GitHub Actions (lint + tests)
 ├── data/                        # Raw datasets (not tracked)
 ├── models/                      # Trained .pkl artifacts (not tracked)
 ├── notebooks/                   # Exploratory notebooks
-├── outputs/                     # SHAP & elbow plots
+├── outputs/                     # SHAP plots, elbow plot, query CSVs
 ├── research_paper/              # Credit invisibility research paper
 ├── frontend/                    # LendIQ dashboard
 │   ├── index.html               # Dashboard
@@ -360,9 +379,8 @@ Digital-Lending-Optimization/
 │   ├── assets/                  # Screenshots
 │   └── js/                      # api.js, dashboard.js, scorer.js, etc.
 └── tests/                       # pytest suite
-    ├── test_features.py
-    ├── test_api.py
-    └── test_pricing.py
+    ├── test_helpers.py
+    └── test_api.py
 ```
 
 ---
@@ -395,6 +413,6 @@ Digital-Lending-Optimization/
 
 **Engineering**
 - Migrate DB hosting from Google Drive → S3/R2 (gdown is fragile on cold starts)
-- Add a `Dockerfile` for the backend
+- ~~Add a `Dockerfile` for the backend~~ — **DONE**
 - Add a `MODEL_CARD.md` documenting training data, intended use, and fairness considerations
-- CI via GitHub Actions (lint + tests on every PR)
+- ~~CI via GitHub Actions (lint + tests on every PR)~~ — **DONE**

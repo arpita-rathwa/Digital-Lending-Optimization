@@ -1,5 +1,4 @@
-"""
-Tests for the pure (no I/O) helpers in ``main.py``.
+"""Tests for the pure (no I/O) helpers.
 
 These tests do not require the trained models or the SQLite database,
 so they can run in any environment with just ``numpy`` installed.
@@ -8,13 +7,10 @@ so they can run in any environment with just ``numpy`` installed.
 import numpy as np
 import pytest
 
-from main import (
-    BorrowerInput,
-    engineer_features,
-    get_early_warning,
-    recommend_rate,
-    risk_tier_from_probability,
-)
+from lendiql.early_warning import get_early_warning, risk_tier_from_probability
+from lendiql.features import engineer_features
+from lendiql.pricing import recommend_rate
+from lendiql.schemas import BorrowerInput
 
 
 # ── A canonical borrower used across multiple tests ──────────────
@@ -58,7 +54,6 @@ class TestRiskTier:
         assert risk_tier_from_probability(p) == expected
 
     def test_consistency_with_threshold(self):
-        """The bug we're fixing: tier and probability must agree."""
         for p in [0.0, 0.1, 0.3, 0.5, 0.7, 0.9, 1.0]:
             tier = risk_tier_from_probability(p)
             if p < 0.25:
@@ -77,15 +72,11 @@ class TestEngineerFeatures:
 
     def test_derived_features_match_formula(self, sample_borrower):
         _, interest_rate, lti, burden = engineer_features(sample_borrower)
-        # loan_to_income = loan / (income + 1)
         assert lti == pytest.approx(sample_borrower.loan_amount / (sample_borrower.income + 1))
-        # monthly_burden = loan / (term + 1)
         assert burden == pytest.approx(sample_borrower.loan_amount / (sample_borrower.term_months + 1))
-        # supplied interest_rate is preserved
         assert interest_rate == sample_borrower.interest_rate
 
     def test_default_interest_rate_by_medium(self):
-        """When interest_rate is omitted, falls back to medium default."""
         b = BorrowerInput(
             loan_amount=10_000, term_months=24, income=40_000, dti=20.0,
             credit_score=700, employment_length=3.0, home_ownership="RENT",
@@ -94,7 +85,7 @@ class TestEngineerFeatures:
             first_time_borrower=1, urban_flag=0,
         )
         _, ir, _, _ = engineer_features(b)
-        assert ir == 8.0  # Microfinance default
+        assert ir == 8.0
 
     def test_high_dti_flag(self):
         b = BorrowerInput(
@@ -105,7 +96,6 @@ class TestEngineerFeatures:
             first_time_borrower=0, urban_flag=0,
         )
         X, _, _, _ = engineer_features(b)
-        # high_dti_flag is the 10th feature (index 9)
         assert X[0, 9] == 1.0
 
     def test_long_term_flag(self):
@@ -117,7 +107,6 @@ class TestEngineerFeatures:
             first_time_borrower=0, urban_flag=0,
         )
         X, _, _, _ = engineer_features(b)
-        # long_term_flag is the 11th feature (index 10)
         assert X[0, 10] == 1.0
 
 
@@ -138,7 +127,6 @@ class TestRecommendRate:
         assert rate >= 30.0
 
     def test_clipped_to_min(self):
-        # Mobile score 850, no UPI, no first_timer → heavy discount → clipped
         rate = recommend_rate(
             default_prob=0.0, risk_tier="Low",
             mobile_score=850, upi_count=0, first_timer=0,

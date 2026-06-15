@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lendiql"
+version = "2.0.0"
+description = "LendIQ — Multi-Medium Lending Intelligence & Decision Optimization"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+keywords = ["lending", "credit-risk", "financial-technology", "ml"]
+
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "pandas",
+    "numpy",
+    "scikit-learn",
+    "xgboost",
+    "pydantic",
+    "gdown",
+    "shap",
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "httpx",
+    "jupyter",
+    "ipykernel",
+    "optuna",
+    "lightgbm",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["lendiql*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W"]

@@ -1,0 +1,13 @@
+lending_medium,risk_tier,loan_count,default_rate_pct,avg_loan,avg_loss
+Bank,High,7108,100.0,10850.5,7075.3
+Bank,Low,18979,0.0,9253.35,0.0
+Bank,Medium,6494,0.0,9191.04,0.0
+Microfinance,High,10392,100.0,1787.61,1166.0
+Microfinance,Low,495979,0.0,826.92,0.0
+Microfinance,Medium,164834,0.0,829.37,0.0
+P2P,High,5666,100.0,12148.53,7893.94
+P2P,Low,25196,0.0,10964.56,0.0
+P2P,Medium,8390,0.0,10972.59,0.0
+SME,High,7375,100.0,319271.73,207623.14
+SME,Low,11092,0.0,332170.92,0.0
+SME,Medium,3635,0.0,330324.52,0.0

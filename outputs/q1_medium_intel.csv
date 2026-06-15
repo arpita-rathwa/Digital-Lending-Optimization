@@ -1,0 +1,5 @@
+lending_medium,total_loans,default_rate_pct,avg_loan,avg_rate,total_loss_exposure
+SME,22102,33.4,327563.05,7.98,1531220640.68
+Bank,32581,21.8,9589.37,11.01,50291244.69
+P2P,39252,14.4,11137.18,11.98,44727048.16
+Microfinance,671205,1.5,842.4,10.65,12117094.64
