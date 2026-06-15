@@ -1,5 +1,10 @@
 // ── LendIQ API Integration ────────────────────────────────
-const API_BASE = 'https://digital-lending-api.onrender.com';
+// To point at a local backend during development, set window.API_BASE
+// in your browser console or in a local script tag before api.js loads:
+//     window.API_BASE = 'http://localhost:8000';
+const API_BASE = (typeof window !== 'undefined' && window.API_BASE)
+    ? window.API_BASE
+    : 'https://digital-lending-api.onrender.com';
 
 // ── Fetch Portfolio Data ──────────────────────────────────
 async function fetchPortfolio() {

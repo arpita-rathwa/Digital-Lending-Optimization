@@ -1,8 +1,24 @@
 fastapi
-uvicorn
+uvicorn[standard]
 pandas
 numpy
 scikit-learn
 xgboost
 pydantic
 gdown
+
+# Explainability & visualization
+shap
+matplotlib
+
+# Notebooks
+jupyter
+ipykernel
+
+# Future improvements (optional, used in ML pipeline Optuna step)
+optuna
+lightgbm
+
+# Testing
+pytest
+httpx
