@@ -18,9 +18,7 @@ pytestmark = pytest.mark.skipif(
 from fastapi.testclient import TestClient
 
 from lendiql.app import app
-from lendiql.models import init_on_startup
 
-init_on_startup()
 client = TestClient(app)
 
 

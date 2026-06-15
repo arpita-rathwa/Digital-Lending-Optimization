@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import os
 import sqlite3
-from contextlib import asynccontextmanager
 
 import numpy as np
 import pandas as pd
@@ -27,18 +26,10 @@ from lendiql.models import (
 from lendiql.pricing import recommend_rate
 from lendiql.schemas import BorrowerInput
 
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    init_on_startup()
-    yield
-
-
 app = FastAPI(
     title="Digital Lending Optimization API",
     description="LendIQ — multi-medium lending intelligence & decision optimization",
     version=__version__,
-    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -47,6 +38,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+def _on_startup() -> None:
+    init_on_startup()
 
 
 # ── Endpoints ─────────────────────────────────────────────────────
