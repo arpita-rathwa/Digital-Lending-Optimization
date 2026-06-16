@@ -2,7 +2,7 @@
 ### LendIQ — Multi-Medium Lending Intelligence & Decision Optimization Platform
 
 [![Live API](https://img.shields.io/badge/Live%20API-FastAPI-009688?style=for-the-badge&logo=fastapi)](https://digital-lending-optimization-1.onrender.com)
-[![Live App](https://img.shields.io/badge/Live%20App-LendIQ-FF5A5F?style=for-the-badge&logo=netlify)](https://stunning-entremet-5ad620.netlify.app/scorer)
+[![Live App](https://img.shields.io/badge/Live%20App-LendIQ-FF5A5F?style=for-the-badge&logo=netlify)](https://zingy-sopapillas-e170dc.netlify.app/scorer)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/arpita-rathwa/Digital-Lending-Optimization)
 
 > An end-to-end digital lending intelligence system spanning 4 lending mediums (P2P, Bank, Microfinance, SME) and 765,140 loans — combining risk prediction, borrower segmentation, and a full optimization layer (approval thresholds, dynamic pricing, portfolio health scoring, early warning) into a deployed full-stack platform with a FastAPI backend and an interactive LendIQ frontend.
