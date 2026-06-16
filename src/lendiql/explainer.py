@@ -1,82 +1,95 @@
-"""Gemini-powered portfolio explainer — turns raw metrics into plain-English insights."""
+"""Deterministic portfolio explainer — turns raw metrics into plain-English insights."""
 
 from __future__ import annotations
 
-import json
-import time
 
-from google import genai
-from google.genai import types as genai_types
-
-from lendiql.config import GEMINI_API_KEY, GEMINI_MODEL
-
-_cache: dict = {"data": None, "expires_at": 0.0}
-
-def _build_prompt(portfolio: dict) -> str:
+def explain_portfolio(portfolio: dict) -> str:
     mediums = portfolio.get("medium_summary", [])
     segments = portfolio.get("segments", [])
+    health_scores = portfolio.get("health_scores", [])
 
-    medium_lines = "\n".join(
-        f"- {m['lending_medium']}: {m['total_loans']} loans, "
-        f"{m['default_rate']*100:.1f}% default rate, "
-        f"${m['avg_loan_amount']:,.0f} avg loan"
-        for m in mediums
+    if not mediums and not segments:
+        return "No portfolio data available to analyze."
+
+    health_map = {h["lending_medium"]: h["health_score"] for h in health_scores}
+
+    best_medium = worst_medium = None
+    if mediums:
+        sorted_media = sorted(mediums, key=lambda m: m["default_rate"])
+        best_medium = sorted_media[0]
+        worst_medium = sorted_media[-1]
+
+    worst_segment = None
+    if segments:
+        worst_segment = max(segments, key=lambda s: s["default_rate"])
+
+    total_loans = sum(m["total_loans"] for m in mediums)
+    avg_default_rate = (
+        sum(m["default_rate"] * m["total_loans"] for m in mediums) / total_loans
+        if total_loans
+        else 0
     )
-    seg_lines = "\n".join(
-        f"- {s['segment']}: {s['total_loans']} loans, "
-        f"{s['default_rate']*100:.1f}% default rate, "
-        f"${s['avg_loan']:,.0f} avg loan, {s['avg_recommended_rate']:.1f}% rate"
-        for s in segments
-    )
-    health = portfolio.get("health_scores", [])
-    health_line = ", ".join(
-        f"{h['lending_medium']}={h['health_score']}" for h in health
-    )
 
-    return f"""You are a chief risk officer's AI analyst. Given this portfolio data, write a sharp analysis (<200 words). Cover: 1) strongest/weakest medium, 2) riskiest segment, 3) one recommendation.
+    lines = []
 
-Health scores: {health_line}
+    # ── Medium analysis ──
+    if best_medium and worst_medium:
+        best_name = best_medium["lending_medium"]
+        worst_name = worst_medium["lending_medium"]
+        best_def = best_medium["default_rate"] * 100
+        worst_def = worst_medium["default_rate"] * 100
+        best_health = health_map.get(best_name, "N/A")
+        worst_health = health_map.get(worst_name, "N/A")
 
-Mediums:
-{medium_lines}
+        lines.append(
+            f"{best_name} is the strongest medium ({best_def:.1f}% default rate, "
+            f"health score {best_health}), while {worst_name} is the weakest "
+            f"({worst_def:.1f}% default rate, health score {worst_health})."
+        )
 
-Segments:
-{seg_lines}"""
+        # Compare to portfolio average
+        avg_def_pct = avg_default_rate * 100
+        for m in [worst_medium]:
+            m_def = m["default_rate"] * 100
+            if m_def > avg_def_pct * 1.5:
+                lines.append(
+                    f"{m['lending_medium']}'s default rate ({m_def:.1f}%) is "
+                    f"{m_def/avg_def_pct:.1f}x the portfolio average ({avg_def_pct:.1f}%) "
+                    f"— this medium is driving most of the portfolio risk."
+                )
 
+    # ── Segment spotlight ──
+    if worst_segment:
+        seg_def = worst_segment["default_rate"] * 100
+        seg_loans = worst_segment["total_loans"]
+        lines.append(
+            f"The {worst_segment['segment']} segment requires attention: "
+            f"{seg_loans:,} loans with a {seg_def:.1f}% default rate."
+        )
 
-def explain_portfolio(portfolio: dict) -> str | None:
-    if not GEMINI_API_KEY:
-        return None
+    # ── Recommendation ──
+    if worst_medium:
+        recs = []
+        w_name = worst_medium["lending_medium"]
+        w_def = worst_medium["default_rate"]
 
-    now = time.time()
-    if _cache["data"] and now < _cache["expires_at"]:
-        return _cache["data"]
-
-    prompt = _build_prompt(portfolio)
-    client = genai.Client(api_key=GEMINI_API_KEY)
-    models = [GEMINI_MODEL, "gemini-2.0-flash-lite"]
-
-    for model in models:
-        try:
-            resp = client.models.generate_content(
-                model=model,
-                contents=prompt,
+        if w_def > 0.25:
+            recs.append(
+                f"Tighten approval criteria for {w_name} — raise the minimum credit "
+                f"score or reduce max loan-to-income ratios."
             )
-            result = resp.text.strip()
-            _cache["data"] = result
-            _cache["expires_at"] = now + 60
-            return result
-        except genai_types.HttpError as e:
-            if "RESOURCE_EXHAUSTED" in str(e) or "429" in str(e):
-                continue
-            _cache["data"] = f"AI explanation unavailable: {e}"
-            _cache["expires_at"] = now + 60
-            return _cache["data"]
-        except Exception as e:
-            _cache["data"] = f"AI explanation unavailable: {e}"
-            _cache["expires_at"] = now + 60
-            return _cache["data"]
+        if best_medium:
+            recs.append(
+                f"Consider reallocating marketing spend toward {best_medium['lending_medium']} "
+                f"which shows the strongest risk-adjusted performance."
+            )
+        if worst_segment and worst_segment["default_rate"] > 0.2:
+            recs.append(
+                f"Review underwriting rules for the {worst_segment['segment']} segment "
+                f"to add stricter income or collateral requirements."
+            )
 
-    _cache["data"] = "AI explanation unavailable: All models are rate-limited (free tier exhausted). Try again in a minute or upgrade at https://ai.google.dev/pricing"
-    _cache["expires_at"] = now + 30
-    return _cache["data"]
+        if recs:
+            lines.append("Recommendation: " + " ".join(recs[:2]))
+
+    return "\n\n".join(lines)

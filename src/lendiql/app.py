@@ -194,13 +194,7 @@ def portfolio_explain():
         "segments": segments_df.to_dict(orient="records"),
     }
 
-    explanation = explain_portfolio(portfolio_data)
-    if explanation is None:
-        return {
-            "explanation": None,
-            "note": "Set GEMINI_API_KEY in your environment to enable AI explanations.",
-        }
-    return {"explanation": explanation}
+    return {"explanation": explain_portfolio(portfolio_data)}
 
 
 @app.get("/early-warning")
