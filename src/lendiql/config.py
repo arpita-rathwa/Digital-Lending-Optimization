@@ -3,6 +3,8 @@
 import os
 
 DB_PATH = os.getenv("LENDIQ_DB_PATH", "digital_lending.db")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
 DB_DRIVE_URL = os.getenv(
     "LENDIQ_DB_DRIVE_URL",
     "https://drive.google.com/uc?id=1kCqmBCDvVwVY8RQ5NDLiVQzfTDZFa5MS",

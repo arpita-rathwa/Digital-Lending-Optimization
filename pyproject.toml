@@ -22,6 +22,7 @@ dependencies = [
     "gdown",
     "shap",
     "matplotlib",
+    "google-genai",
 ]
 
 [project.optional-dependencies]

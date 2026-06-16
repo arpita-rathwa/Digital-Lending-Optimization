@@ -23,6 +23,7 @@ from lendiql.models import (
     predict_borrower,
     require_ready,
 )
+from lendiql.explainer import explain_portfolio
 from lendiql.pricing import recommend_rate
 from lendiql.schemas import BorrowerInput
 
@@ -161,6 +162,45 @@ def portfolio():
         "medium_summary": medium.to_dict(orient="records"),
         "segments": segments.to_dict(orient="records"),
     }
+
+
+@app.post("/portfolio/explain")
+def portfolio_explain():
+    """Generate an AI-powered plain‑English analysis of the current portfolio."""
+    err = get_startup_error()
+    if err or not os.path.exists(DB_PATH):
+        raise HTTPException(
+            status_code=503,
+            detail=f"Database not available: {err or 'missing'}",
+        )
+
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        health = pd.read_sql_query(
+            "SELECT * FROM portfolio_health ORDER BY health_score DESC", conn
+        )
+        medium = pd.read_sql_query(
+            "SELECT * FROM medium_summary ORDER BY default_rate DESC", conn
+        )
+        segments_df = pd.read_sql_query(
+            "SELECT * FROM segment_summary ORDER BY default_rate DESC", conn
+        )
+    finally:
+        conn.close()
+
+    portfolio_data = {
+        "health_scores": health.to_dict(orient="records"),
+        "medium_summary": medium.to_dict(orient="records"),
+        "segments": segments_df.to_dict(orient="records"),
+    }
+
+    explanation = explain_portfolio(portfolio_data)
+    if explanation is None:
+        return {
+            "explanation": None,
+            "note": "Set GEMINI_API_KEY in your environment to enable AI explanations.",
+        }
+    return {"explanation": explanation}
 
 
 @app.get("/early-warning")

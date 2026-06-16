@@ -169,6 +169,19 @@ async function loadPortfolioPage() {
         });
     }
 
+    // ── AI Portfolio Explanation ──────────────────────────
+    const aiEl = document.getElementById('ai-explanation');
+    if (aiEl) {
+        const result = await fetchPortfolioExplanation();
+        if (result && result.explanation) {
+            aiEl.innerHTML = `<div class="text-body-md text-on-surface leading-relaxed whitespace-pre-line">${escapeHtml(result.explanation)}</div>`;
+        } else if (result && result.note) {
+            aiEl.innerHTML = `<div class="flex items-center gap-3 py-4 text-on-surface-variant"><span class="material-symbols-outlined">info</span><span class="font-body-md">${escapeHtml(result.note)}</span></div>`;
+        } else {
+            aiEl.innerHTML = `<div class="text-on-surface-variant font-body-md py-4">AI explanation unavailable.</div>`;
+        }
+    }
+
     // ── SHAP Feature Importance (if container exists) ──────
     const shapContainer = document.getElementById('shap-features');
     if (shapContainer) {
@@ -187,6 +200,12 @@ async function loadPortfolioPage() {
             `).join('');
         }
     }
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 document.addEventListener('DOMContentLoaded', loadPortfolioPage);

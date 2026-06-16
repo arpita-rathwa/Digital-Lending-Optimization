@@ -54,6 +54,17 @@ async function predictRisk(borrowerData) {
     }
 }
 
+// ── Fetch Portfolio AI Explanation ────────────────────────
+async function fetchPortfolioExplanation() {
+    try {
+        const res = await fetch(`${API_BASE}/portfolio/explain`, { method: 'POST' });
+        return await res.json();
+    } catch (e) {
+        console.error('Explanation fetch failed:', e);
+        return null;
+    }
+}
+
 // ── Helpers ───────────────────────────────────────────────
 function formatCurrency(val) {
     if (!val) return '$0';

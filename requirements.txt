@@ -19,6 +19,9 @@ ipykernel
 optuna
 lightgbm
 
+# AI Explanations
+google-genai
+
 # Testing
 pytest
 httpx
