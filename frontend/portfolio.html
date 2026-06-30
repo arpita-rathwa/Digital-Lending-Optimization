@@ -3,6 +3,13 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Portfolio Intelligence | LendIQ</title>
+<link href="/app/manifest.json" rel="manifest"/>
+<meta content="#b52330" name="theme-color"/>
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/app/service-worker.js');
+    }
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -99,7 +106,7 @@
 <div class="flex items-center gap-4 flex-1">
 <div class="relative w-full max-w-md hidden sm:block">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-<input class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-body-md font-body-md focus:ring-2 focus:ring-primary-container transition-all" placeholder="Search portfolio assets..." type="text"/>
+<input id="portfolio-search" class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-body-md font-body-md focus:ring-2 focus:ring-primary-container transition-all" placeholder="Search portfolio assets..." type="text"/>
 </div>
 <h2 class="md:hidden font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">LendIQ</h2>
 </div>
@@ -115,6 +122,7 @@
 <header class="mb-8">
 <h1 class="font-headline-lg text-headline-lg font-bold text-on-surface mb-2">Portfolio Intelligence</h1>
 <p class="font-body-md text-body-md text-on-surface-variant">Real-time analysis of lending mediums and segment performance across emerging markets.</p>
+<p class="freshness-banner text-xs text-on-surface-variant font-medium mt-1">—</p>
 </header>
 <!-- Medium Comparison Table -->
 <section class="bg-surface-container-lowest rounded-xl border border-outline-variant card-shadow mb-gap-lg overflow-hidden">

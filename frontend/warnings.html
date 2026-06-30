@@ -4,6 +4,13 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>LendIQ — Early Warning Queue</title>
+<link href="/app/manifest.json" rel="manifest"/>
+<meta content="#b52330" name="theme-color"/>
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/app/service-worker.js');
+    }
+</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -175,7 +182,7 @@
 </div>
 <div class="relative max-w-md w-full hidden md:block">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
-<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-md font-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="Search portfolios, loans, or risk flags..." type="text"/>
+<input id="warnings-search" class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-md font-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="Search portfolios, loans, or risk flags..." type="text"/>
 </div>
 </div>
 <div class="flex items-center gap-4">
@@ -197,6 +204,7 @@
 <div>
 <h2 class="font-headline-lg text-headline-lg text-on-surface mb-1">Early Warning Queue</h2>
 <p class="font-body-md text-body-md text-on-surface-variant">Real-time risk monitoring for active lending portfolios.</p>
+<p class="freshness-banner text-xs text-on-surface-variant font-medium mt-1">—</p>
 </div>
 <div class="flex gap-2">
 <button class="px-4 py-2 bg-surface-container-highest text-on-surface-variant rounded-lg font-label-md text-label-md hover:bg-outline-variant/30 transition-colors flex items-center gap-2">
@@ -250,7 +258,7 @@
 <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Critical</p>
 <span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">error</span>
 </div>
-<p class="font-metric-lg text-metric-lg text-on-surface" id="summary-critical">14</p>
+<p class="font-metric-lg text-metric-lg text-on-surface" id="summary-critical">—</p>
 <p class="text-label-sm text-error flex items-center gap-1 mt-1">
 <span class="material-symbols-outlined text-[14px]">trending_up</span>
                     +3 this week
@@ -261,7 +269,7 @@
 <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Warning</p>
 <span class="material-symbols-outlined text-primary">warning</span>
 </div>
-<p class="font-metric-lg text-metric-lg text-on-surface" id="summary-warning">38</p>
+<p class="font-metric-lg text-metric-lg text-on-surface" id="summary-warning">—</p>
 <p class="text-label-sm text-secondary flex items-center gap-1 mt-1">
 <span class="material-symbols-outlined text-[14px]">trending_flat</span>
                     Stable
@@ -272,7 +280,7 @@
 <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Watch</p>
 <span class="material-symbols-outlined text-secondary">visibility</span>
 </div>
-<p class="font-metric-lg text-metric-lg text-on-surface" id="summary-watch">112</p>
+<p class="font-metric-lg text-metric-lg text-on-surface" id="summary-watch">—</p>
 <p class="text-label-sm text-tertiary flex items-center gap-1 mt-1">
 <span class="material-symbols-outlined text-[14px]">trending_down</span>
                     -8 improvement
@@ -283,7 +291,7 @@
 <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Healthy</p>
 <span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
 </div>
-<p class="font-metric-lg text-metric-lg text-on-surface" id="summary-healthy" >2,481</p>
+<p class="font-metric-lg text-metric-lg text-on-surface" id="summary-healthy" >—</p>
 <p class="text-label-sm text-tertiary flex items-center gap-1 mt-1">
 <span class="material-symbols-outlined text-[14px]">trending_up</span>
                     +42 onboarding
@@ -328,17 +336,10 @@
 <span class="material-symbols-outlined text-primary">auto_awesome</span>
 <h4 class="font-headline-md text-headline-md text-on-surface">Intelligence Advisory</h4>
 </div>
-<div class="space-y-4">
-<div class="p-4 bg-primary-container/5 rounded-lg border border-primary-container/20">
-<p class="font-body-md text-body-md text-on-surface">
-<strong>Cluster Alert:</strong> We've detected a 14% increase in delinquency flags within the <span class="font-bold">SME Micro</span> segment in the last 48 hours. Recommend adjusting approval thresholds for new applications in this medium.
-                        </p>
-</div>
-<div class="p-4 bg-tertiary-container/5 rounded-lg border border-tertiary-container/20">
-<p class="font-body-md text-body-md text-on-surface">
-<strong>Recovery Success:</strong> Early outreach for "Watch" level clients has resulted in a 22% improvement in repayment rates this month. Keep maintaining current contact frequency.
-                        </p>
-</div>
+<div class="space-y-4" id="intelligence-advisory-content">
+<div class="animate-pulse space-y-3">
+  <div class="h-20 bg-surface-container-highest rounded-lg"></div>
+  <div class="h-20 bg-surface-container-highest rounded-lg"></div>
 </div>
 <!-- Abstract UI element -->
 <div class="absolute -right-10 -bottom-10 opacity-5 pointer-events-none">
@@ -352,8 +353,8 @@
 </div>
 <div class="flex items-end justify-between">
 <div>
-<p class="text-[48px] font-bold leading-none">82.4</p>
-<p class="text-label-sm uppercase tracking-tighter mt-2">Stable Condition</p>
+<p class="text-[48px] font-bold leading-none" id="portfolio-health-index">—</p>
+<p class="text-label-sm uppercase tracking-tighter mt-2" id="portfolio-health-status">Loading...</p>
 </div>
 <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
 <span class="material-symbols-outlined text-[40px]">shield_with_heart</span>

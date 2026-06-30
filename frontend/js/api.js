@@ -39,21 +39,6 @@ async function fetchShap() {
     }
 }
 
-// ── Predict Borrower Risk ─────────────────────────────────
-async function predictRisk(borrowerData) {
-    try {
-        const res = await fetch(`${API_BASE}/predict`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(borrowerData)
-        });
-        return await res.json();
-    } catch (e) {
-        console.error('Predict failed:', e);
-        return null;
-    }
-}
-
 // ── Fetch Portfolio AI Explanation ────────────────────────
 async function fetchPortfolioExplanation() {
     try {
@@ -97,12 +82,60 @@ function getHealthColor(score) {
     return '#ef4444';
 }
 
-function showLoading(elementId) {
-    const el = document.getElementById(elementId);
-    if (el) el.innerHTML = '<div class="animate-pulse bg-gray-200 rounded h-6 w-24"></div>';
-}
-
 function showError(elementId, msg = 'Error loading') {
     const el = document.getElementById(elementId);
     if (el) el.textContent = msg;
+}
+
+// ── Data Freshness ──────────────────────────────────────────
+async function fetchWithFreshness(url, options = {}) {
+    const start = Date.now();
+    try {
+        const res = await fetch(url, options);
+        const data = await res.json();
+        updateFreshnessBanner(start);
+        return data;
+    } catch (e) {
+        updateFreshnessBanner(null);
+        console.error('Fetch failed:', e);
+        return null;
+    }
+}
+
+function updateFreshnessBanner(startTime) {
+    const banners = document.querySelectorAll('.freshness-banner');
+    if (!banners.length) return;
+    if (startTime === null) {
+        banners.forEach(b => { b.textContent = '⚠ Connection error'; b.className = 'freshness-banner text-xs text-error font-medium'; });
+        return;
+    }
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    const label = elapsed < 60 ? `${elapsed}s ago` : `${Math.floor(elapsed / 60)}m ago`;
+    banners.forEach(b => { b.textContent = `Last updated: ${label}`; b.className = 'freshness-banner text-xs text-on-surface-variant font-medium'; });
+}
+
+// ── Skeleton Helpers ────────────────────────────────────────
+function skeletonBox(height = 'h-6', width = 'w-full', count = 1) {
+    return Array(count).fill(0).map(() =>
+        `<div class="animate-pulse bg-surface-container-highest rounded ${height} ${width} mb-2"></div>`
+    ).join('');
+}
+
+function skeletonCard() {
+    return `
+    <div class="animate-pulse bg-surface-container-lowest rounded-xl border border-outline-variant p-container-padding space-y-4">
+        ${skeletonBox('h-4', 'w-1/3')}
+        ${skeletonBox('h-8', 'w-2/3')}
+        ${skeletonBox('h-4', 'w-1/2')}
+    </div>`;
+}
+
+// ── Retry Helper ────────────────────────────────────────────
+async function fetchWithRetry(url, options = {}, retries = 2) {
+    for (let i = 0; i <= retries; i++) {
+        const result = await fetchWithFreshness(url, options);
+        if (result !== null) return result;
+        if (i < retries) await new Promise(r => setTimeout(r, 1000 * (i + 1)));
+    }
+    return null;
 }

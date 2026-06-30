@@ -22,3 +22,24 @@ class BorrowerInput(BaseModel):
     first_time_borrower: int = Field(..., ge=0, le=1)
     urban_flag: int = Field(..., ge=0, le=1)
     interest_rate: Optional[float] = Field(default=None, ge=0)
+
+
+class LoanCandidate(BaseModel):
+    id: str
+    loan_amount: float = Field(..., gt=0)
+    expected_return: float = Field(..., ge=0)
+    risk_score: float = Field(..., ge=0, le=1)
+
+
+class OptimizationRequest(BaseModel):
+    budget: float = Field(..., gt=0)
+    max_loss_rate: float = Field(default=0.15, ge=0, le=1)
+    max_medium_concentration: float = Field(default=0.40, ge=0, le=1)
+    candidates: list[LoanCandidate]
+
+
+class PartnerRequest(BaseModel):
+    partner: str = Field(..., pattern="^(Bank|P2P|Microfinance|SME)$")
+    borrower: BorrowerInput
+    api_key: str = Field(..., min_length=8)
+    callback_url: Optional[str] = None

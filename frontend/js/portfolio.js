@@ -1,7 +1,7 @@
 // ── Portfolio Page Logic ──────────────────────────────────
 
 async function loadPortfolioPage() {
-    const data = await fetchPortfolio();
+    const data = await fetchWithFreshness(`${API_BASE}/portfolio`);
     if (!data) {
         const loading = document.getElementById('table-loading');
         if (loading) loading.innerHTML = '<td colspan="7" class="px-6 py-12 text-center text-on-surface-variant">Failed to load portfolio data</td>';
@@ -30,7 +30,7 @@ async function loadPortfolioPage() {
                 const defBarColor = m.default_rate >= 0.3 ? 'bg-primary' : m.default_rate >= 0.15 ? 'bg-primary-container' : 'bg-tertiary';
 
                 return `
-                <tr class="hover:bg-surface-container-low transition-colors group">
+                <tr class="hover:bg-surface-container-low transition-colors group" data-medium="${m.lending_medium.toLowerCase()}">
                     <td class="px-6 py-4 font-bold text-primary">${String(i+1).padStart(2,'0')}</td>
                     <td class="px-6 py-4 font-semibold">${m.lending_medium}</td>
                     <td class="px-6 py-4 text-right">${m.total_loans.toLocaleString()}</td>
@@ -70,7 +70,7 @@ async function loadPortfolioPage() {
             const trendColor = s.default_rate >= 0.3 ? 'text-primary' : s.default_rate >= 0.1 ? 'text-primary-container' : 'text-tertiary';
 
             return `
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant card-shadow p-5 hover:border-primary transition-all group cursor-pointer">
+            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant card-shadow p-5 hover:border-primary transition-all group cursor-pointer" data-segment="${s.segment.toLowerCase()}">
                 <div class="flex justify-between items-start mb-4">
                     <h4 class="font-label-md text-label-md font-bold text-on-surface uppercase tracking-tight">${s.segment}</h4>
                     <span class="material-symbols-outlined text-[18px] ${trendColor}">${trendIcon}</span>
@@ -200,10 +200,38 @@ async function loadPortfolioPage() {
     }
 }
 
+// ── Search Bar ────────────────────────────────────────────
+function filterPortfolio(query) {
+    const q = query.toLowerCase();
+    const tableRows = document.querySelectorAll('#medium-table-body tr');
+    const segCards = document.querySelectorAll('#segment-grid > div');
+
+    tableRows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(q) ? '' : 'none';
+    });
+
+    segCards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(q) ? '' : 'none';
+    });
+}
+
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
 
-document.addEventListener('DOMContentLoaded', loadPortfolioPage);
+document.addEventListener('DOMContentLoaded', () => {
+    loadPortfolioPage();
+
+    const searchInput = document.querySelector('#portfolio-search');
+    if (searchInput) {
+        let timer;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(timer);
+            timer = setTimeout(() => filterPortfolio(searchInput.value), 200);
+        });
+    }
+});

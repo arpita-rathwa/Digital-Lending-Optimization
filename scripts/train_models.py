@@ -1,4 +1,4 @@
-"""Retrain all ML models for LendIQ with regularization."""
+"""Retrain all ML models for LendIQ with regularization, calibration, and explainability."""
 
 import os, sqlite3, pickle, warnings
 import numpy as np
@@ -6,6 +6,7 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier, XGBRegressor
 
 warnings.filterwarnings("ignore")
@@ -135,4 +136,72 @@ for name, obj in artifacts.items():
         pickle.dump(obj, f)
     print(f"  {name}.pkl — {os.path.getsize(path):,} bytes")
 
-print("Done!")
+# ── Platt Scaling (Calibration) ─────────────────────────────────
+print("\nTraining Platt calibrator...")
+cal_proba = xgb_default.predict_proba(X_test_s)[:, 1]
+calibrator = LogisticRegression()
+calibrator.fit(cal_proba.reshape(-1, 1), y_test_d)
+with open(os.path.join(MODELS_DIR, "calibrator.pkl"), "wb") as f:
+    pickle.dump(calibrator, f)
+print(f"  calibrator.pkl saved")
+
+# ── Conformal Prediction — Non-conformity Scores ────────────────
+print("\nComputing conformal non-conformity scores...")
+val_idx = df.sample(10_000, random_state=RANDOM_STATE).index
+X_val = scaler.transform(X.loc[val_idx])
+y_val = y_default.loc[val_idx]
+val_proba = xgb_default.predict_proba(X_val)[:, 1]
+ncf_scores = 1.0 - np.maximum(val_proba, 1.0 - val_proba)
+alpha = 0.1
+q_hat = float(np.quantile(ncf_scores, 1 - alpha))
+conformal_data = {"q_hat": q_hat, "n_scores": len(ncf_scores), "alpha": alpha}
+with open(os.path.join(MODELS_DIR, "conformal_scores.pkl"), "wb") as f:
+    pickle.dump(conformal_data, f)
+print(f"  conformal_scores.pkl — q_hat={q_hat:.4f} at alpha={alpha}")
+
+# ── Feature Statistics for Drift Detection ──────────────────────
+print("\nComputing training feature statistics...")
+stats = {}
+for col in FEATURES:
+    if col not in X.columns:
+        continue
+    series = X[col]
+    stats[col] = {
+        "mean": round(float(series.mean()), 2),
+        "std": round(float(series.std()), 2),
+        "p1": round(float(series.quantile(0.01)), 2),
+        "p99": round(float(series.quantile(0.99)), 2),
+    }
+
+# Write to config import (human-readable summary)
+import json
+stats_path = os.path.join(MODELS_DIR, "feature_stats.json")
+with open(stats_path, "w") as f:
+    json.dump(stats, f, indent=2)
+print(f"  feature_stats.json — {len(stats)} features")
+
+# ── Training Median Rates ──────────────────────────────────────
+print("\nComputing training median rates by medium...")
+median_rates = df.groupby("lending_medium")["interest_rate"].median().to_dict()
+print(f"  median rates: {median_rates}")
+
+# ── SHAP Importance (global) ───────────────────────────────────
+print("\nComputing global SHAP importance...")
+try:
+    import shap
+    explainer = shap.TreeExplainer(xgb_default)
+    shap_vals = explainer.shap_values(X_test_s[:1000])
+    mean_abs_shap = np.abs(shap_vals).mean(axis=0)
+    shap_importance = pd.DataFrame({
+        "feature": FEATURES[:len(mean_abs_shap)],
+        "importance": mean_abs_shap,
+    }).sort_values("importance", ascending=False)
+
+    conn = sqlite3.connect(DB_PATH)
+    shap_importance.to_sql("shap_importance", conn, if_exists="replace", index=False)
+    conn.close()
+    print(f"  SHAP importance written to DB ({len(shap_importance)} features)")
+except Exception as e:
+    print(f"  SHAP computation skipped: {e}")
+
+print("\nTraining complete. All artifacts saved.")

@@ -4,6 +4,13 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>LendIQ Dashboard - Loan Overview</title>
+<link href="/app/manifest.json" rel="manifest"/>
+<meta content="#b52330" name="theme-color"/>
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/app/service-worker.js');
+    }
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
@@ -162,7 +169,7 @@
 <div class="flex items-center gap-4 flex-1">
 <div class="relative w-full max-w-md">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-body-lg">search</span>
-<input class="w-full bg-surface-container-low border border-outline-variant rounded-full py-2 pl-10 pr-4 font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary-container/50 focus:border-primary transition-all" placeholder="Search loans, borrowers, applications..." type="text"/>
+<input id="dashboard-search" class="w-full bg-surface-container-low border border-outline-variant rounded-full py-2 pl-10 pr-4 font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary-container/50 focus:border-primary transition-all" placeholder="Search loans, borrowers, applications..." type="text"/>
 </div>
 </div>
 <div class="flex items-center gap-4">
@@ -179,6 +186,7 @@
 <header class="mb-8">
 <h2 class="font-headline-lg text-headline-lg text-on-surface">Loan Overview</h2>
 <p class="font-body-md text-body-md text-on-surface-variant">Monitor and manage your lending operations across 4 mediums</p>
+<p class="freshness-banner text-xs text-on-surface-variant font-medium mt-1">—</p>
 </header>
 <!-- KPI Row -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-md mb-8">
@@ -186,10 +194,10 @@
 <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-[0_1px_3px_rgba(0,0,0,0.1)]">
 <p class="text-label-md font-label-md text-secondary uppercase tracking-wider mb-2">Total Loan Volume</p>
 <div class="flex items-end justify-between">
-<h3 class="text-metric-lg font-metric-lg text-on-surface" id="kpi-volume">$8.4M</h3>
-<div class="flex items-center text-tertiary text-label-md font-bold bg-tertiary/10 px-2 py-1 rounded-lg">
+<h3 class="text-metric-lg font-metric-lg text-on-surface" id="kpi-volume">—</h3>
+<div class="flex items-center text-tertiary text-label-md font-bold bg-tertiary/10 px-2 py-1 rounded-lg" id="kpi-volume-trend">
 <span class="material-symbols-outlined text-sm mr-1">trending_up</span>
-                        +18.2%
+                        —
                     </div>
 </div>
 </div>
@@ -197,10 +205,10 @@
 <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-[0_1px_3px_rgba(0,0,0,0.1)]">
 <p class="text-label-md font-label-md text-secondary uppercase tracking-wider mb-2">Approved Loans</p>
 <div class="flex items-end justify-between">
-<h3 class="text-metric-lg font-metric-lg text-on-surface" id="kpi-approval">94.9%</h3>
-<div class="flex items-center text-tertiary text-label-md font-bold bg-tertiary/10 px-2 py-1 rounded-lg">
+<h3 class="text-metric-lg font-metric-lg text-on-surface" id="kpi-approval">—</h3>
+<div class="flex items-center text-tertiary text-label-md font-bold bg-tertiary/10 px-2 py-1 rounded-lg" id="kpi-approval-trend">
 <span class="material-symbols-outlined text-sm mr-1">check_circle</span>
-                        Healthy
+                        —
                     </div>
 </div>
 </div>
@@ -208,10 +216,10 @@
 <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-[0_1px_3px_rgba(0,0,0,0.1)]">
 <p class="text-label-md font-label-md text-secondary uppercase tracking-wider mb-2">Default Rate</p>
 <div class="flex items-end justify-between">
-<h3 class="text-metric-lg font-metric-lg text-on-surface" id="kpi-default">4.0%</h3>
-<div class="flex items-center text-error text-label-md font-bold bg-error/10 px-2 py-1 rounded-lg">
+<h3 class="text-metric-lg font-metric-lg text-on-surface" id="kpi-default">—</h3>
+<div class="flex items-center text-error text-label-md font-bold bg-error/10 px-2 py-1 rounded-lg" id="kpi-default-trend">
 <span class="material-symbols-outlined text-sm mr-1">arrow_downward</span>
-                        High Risk
+                        —
                     </div>
 </div>
 </div>
@@ -219,10 +227,10 @@
 <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-[0_1px_3px_rgba(0,0,0,0.1)]">
 <p class="text-label-md font-label-md text-secondary uppercase tracking-wider mb-2">Avg Rec. Rate</p>
 <div class="flex items-end justify-between">
-<h3 class="text-metric-lg font-metric-lg text-on-surface" id="kpi-rate">17.2%</h3>
-<div class="flex items-center text-secondary text-label-md font-bold bg-secondary/10 px-2 py-1 rounded-lg">
+<h3 class="text-metric-lg font-metric-lg text-on-surface" id="kpi-rate">—</h3>
+<div class="flex items-center text-secondary text-label-md font-bold bg-secondary/10 px-2 py-1 rounded-lg" id="kpi-rate-trend">
 <span class="material-symbols-outlined text-sm mr-1">horizontal_rule</span>
-                        Stable
+                        —
                     </div>
 </div>
 </div>
@@ -305,47 +313,12 @@
 <h3 class="font-headline-md text-headline-md text-on-surface">Portfolio Health by Medium</h3>
 <span class="material-symbols-outlined text-secondary cursor-pointer">more_vert</span>
 </div>
-<div class="space-y-6">
-<!-- Microfinance -->
-<div>
-<div class="flex justify-between text-label-md mb-1">
-<span class="text-on-surface font-semibold">Microfinance</span>
-<span class="text-tertiary font-bold">89.57</span>
-</div>
-<div class="w-full bg-surface-container h-3 rounded-full overflow-hidden">
-<div class="bg-tertiary h-full rounded-full" style="width: 89.57%"></div>
-</div>
-</div>
-<!-- P2P -->
-<div>
-<div class="flex justify-between text-label-md mb-1">
-<span class="text-on-surface font-semibold">P2P</span>
-<span class="text-tertiary font-bold">75.34</span>
-</div>
-<div class="w-full bg-surface-container h-3 rounded-full overflow-hidden">
-<div class="bg-tertiary-container h-full rounded-full" style="width: 75.34%"></div>
-</div>
-</div>
-<!-- Bank -->
-<div>
-<div class="flex justify-between text-label-md mb-1">
-<span class="text-on-surface font-semibold">Bank</span>
-<span class="text-tertiary font-bold">70.73</span>
-</div>
-<div class="w-full bg-surface-container h-3 rounded-full overflow-hidden">
-<div class="bg-secondary h-full rounded-full opacity-60" style="width: 70.73%"></div>
-</div>
-</div>
-<!-- SME -->
-<div>
-<div class="flex justify-between text-label-md mb-1">
-<span class="text-on-surface font-semibold">SME</span>
-<span class="text-error font-bold">59.42</span>
-</div>
-<div class="w-full bg-surface-container h-3 rounded-full overflow-hidden">
-<div class="bg-error h-full rounded-full" style="width: 59.42%"></div>
-</div>
-</div>
+<div class="space-y-6" id="health-bars-container">
+<div class="animate-pulse space-y-4">
+  <div class="h-4 bg-surface-container rounded w-full"></div>
+  <div class="h-4 bg-surface-container rounded w-5/6"></div>
+  <div class="h-4 bg-surface-container rounded w-4/6"></div>
+  <div class="h-4 bg-surface-container rounded w-3/6"></div>
 </div>
 <div class="mt-8 pt-6 border-t border-outline-variant">
 <p class="text-label-sm text-on-surface-variant italic">Scale represent health index 0-100 based on weighted risk parameters.</p>
@@ -389,7 +362,7 @@
 <span class="text-label-md font-bold text-error uppercase tracking-widest">Critical</span>
 </div>
 <div class="flex items-baseline gap-2">
-<span class="text-display-lg font-display-lg text-on-surface" id="warn-critical">12</span>
+<span class="text-display-lg font-display-lg text-on-surface" id="warn-critical">—</span>
 <span class="text-body-md text-secondary">Accounts</span>
 </div>
 <p class="text-label-sm text-on-surface-variant mt-2">Requires immediate liquidation or restructuring review.</p>
@@ -403,7 +376,7 @@
 <span class="text-label-md font-bold text-[#ff9800] uppercase tracking-widest">Warning</span>
 </div>
 <div class="flex items-baseline gap-2">
-<span class="text-display-lg font-display-lg text-on-surface" id="warn-warning">48</span>
+<span class="text-display-lg font-display-lg text-on-surface" id="warn-warning">—</span>
 <span class="text-body-md text-secondary">Accounts</span>
 </div>
 <p class="text-label-sm text-on-surface-variant mt-2">30-day delinquency patterns emerging in SME segment.</p>
@@ -417,7 +390,7 @@
 <span class="text-label-md font-bold text-[#ffd600] uppercase tracking-widest">Watch</span>
 </div>
 <div class="flex items-baseline gap-2">
-<span class="text-display-lg font-display-lg text-on-surface" id="warn-watch">156</span>
+<span class="text-display-lg font-display-lg text-on-surface" id="warn-watch">—</span>
 <span class="text-body-md text-secondary">Accounts</span>
 </div>
 <p class="text-label-sm text-on-surface-variant mt-2">Monitoring behavioral shifts in repayment frequency.</p>

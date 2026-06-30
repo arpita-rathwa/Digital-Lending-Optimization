@@ -22,6 +22,10 @@ dependencies = [
     "gdown",
     "shap",
     "matplotlib",
+    "prometheus-client",
+    "python-multipart",
+    "pyjwt",
+    "bcrypt",
 ]
 
 [project.optional-dependencies]
@@ -32,6 +36,7 @@ dev = [
     "ipykernel",
     "optuna",
     "lightgbm",
+    "ruff",
 ]
 
 [tool.setuptools.packages.find]
@@ -40,6 +45,9 @@ include = ["lendiql*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "slow: tests that require trained model files",
+]
 
 [tool.ruff]
 line-length = 100

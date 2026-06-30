@@ -11,6 +11,12 @@ gdown
 shap
 matplotlib
 
+# Production hardening
+prometheus-client
+python-multipart
+pyjwt
+bcrypt
+
 # Notebooks
 jupyter
 ipykernel
@@ -22,3 +28,4 @@ lightgbm
 # Testing
 pytest
 httpx
+ruff

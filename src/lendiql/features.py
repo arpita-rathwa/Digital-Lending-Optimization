@@ -4,7 +4,12 @@ from __future__ import annotations
 
 import numpy as np
 
-from lendiql.config import HOME_OWNERSHIP_MAP, MEDIUM_DEFAULT_RATES, MEDIUM_MAP
+from lendiql.config import (
+    HOME_OWNERSHIP_MAP,
+    MEDIUM_MAP,
+    TRAINING_FEATURE_STATS,
+    TRAINING_MEDIAN_RATES,
+)
 from lendiql.schemas import BorrowerInput
 
 
@@ -18,7 +23,7 @@ def engineer_features(data: BorrowerInput):
     high_dti_flag = int(data.dti > 35)
     long_term_flag = int(data.term_months > 36)
 
-    interest_rate = data.interest_rate or MEDIUM_DEFAULT_RATES.get(data.lending_medium, 10.0)
+    interest_rate = data.interest_rate or TRAINING_MEDIAN_RATES.get(data.lending_medium, 10.0)
     cost_of_credit = (interest_rate / 100) * data.term_months
     risk_interaction = (data.loan_amount * data.dti) / (data.income + 1)
 
@@ -66,3 +71,32 @@ def engineer_features(data: BorrowerInput):
     ]])
 
     return feature_vector, interest_rate, loan_to_income, monthly_burden
+
+
+def validate_features(data: BorrowerInput) -> list[str]:
+    """Check incoming feature values against training-time p1–p99 ranges.
+
+    Returns a list of warning messages for out-of-range features.
+    """
+    warnings = []
+    checks = {
+        "loan_amount": data.loan_amount,
+        "interest_rate": data.interest_rate or 10.0,
+        "term_months": data.term_months,
+        "income": data.income,
+        "dti": data.dti,
+        "credit_score": data.credit_score,
+        "employment_length": data.employment_length,
+        "mobile_credit_score": data.mobile_credit_score,
+        "upi_transaction_count": float(data.upi_transaction_count),
+    }
+    for name, val in checks.items():
+        stats = TRAINING_FEATURE_STATS.get(name)
+        if stats is None:
+            continue
+        if val < stats["p1"] or val > stats["p99"]:
+            warnings.append(
+                f"{name} ({val:.1f}) outside training range "
+                f"[{stats['p1']:.1f}, {stats['p99']:.1f}]"
+            )
+    return warnings

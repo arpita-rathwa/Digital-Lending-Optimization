@@ -85,7 +85,8 @@ class TestEngineerFeatures:
             first_time_borrower=1, urban_flag=0,
         )
         _, ir, _, _ = engineer_features(b)
-        assert ir == 8.0
+        # Falls back to TRAINING_MEDIAN_RATES (7.5 for Microfinance)
+        assert ir == 7.5
 
     def test_high_dti_flag(self):
         b = BorrowerInput(

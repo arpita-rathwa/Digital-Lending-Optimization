@@ -2,7 +2,12 @@
 
 from __future__ import annotations
 
-from lendiql.config import EARLY_WARNING_CONFIG, RISK_TIER_THRESHOLDS
+from lendiql.config import (
+    ADVERSE_ACTION_REASONS,
+    EARLY_WARNING_CONFIG,
+    RISK_TIER_THRESHOLDS,
+    SEGMENT_THRESHOLDS,
+)
 
 
 def risk_tier_from_probability(p: float) -> str:
@@ -12,6 +17,11 @@ def risk_tier_from_probability(p: float) -> str:
     if p < RISK_TIER_THRESHOLDS["Medium"]:
         return "Medium"
     return "High"
+
+
+def segment_approval_threshold(cluster: int) -> float:
+    """Return the approval threshold for a given cluster."""
+    return SEGMENT_THRESHOLDS.get(cluster, 0.50)
 
 
 def get_early_warning(
@@ -45,3 +55,11 @@ def get_early_warning(
     if len(flags) == 2:
         return "WARNING", flags
     return "CRITICAL", flags
+
+
+def adverse_action_reasons(flags: list[str]) -> list[dict]:
+    """Convert internal flag codes to consumer-facing Reg B reasons."""
+    return [
+        {"code": f, "reason": ADVERSE_ACTION_REASONS.get(f, "Other")}
+        for f in flags
+    ]

@@ -1,5 +1,7 @@
 """Central configuration — single source of truth for every threshold / tunable."""
 
+from __future__ import annotations
+
 import os
 
 DB_PATH = os.getenv("LENDIQ_DB_PATH", "digital_lending.db")
@@ -11,6 +13,15 @@ DB_DRIVE_URL = os.getenv(
 # Approval thresholds
 INDIVIDUAL_APPROVAL_THRESHOLD = 0.50
 PORTFOLIO_APPROVAL_THRESHOLD = 0.78
+
+# Per-segment approval thresholds (cluster -> cutoff)
+SEGMENT_THRESHOLDS = {
+    0: 0.35,  # First-Time Micro Borrowers
+    1: 0.25,  # High-Value Stressed
+    2: 0.40,  # Rural Micro Borrowers
+    3: 0.65,  # Urban Established
+    4: 0.55,  # High-Income Large Borrowers
+}
 
 # Risk tier cut-offs (applied to default_probability)
 RISK_TIER_THRESHOLDS = {"Low": 0.25, "Medium": 0.50, "High": 1.01}
@@ -42,6 +53,24 @@ EARLY_WARNING_CONFIG = {
 # Per-medium default interest rate when caller doesn't supply one
 MEDIUM_DEFAULT_RATES = {"P2P": 13.5, "Bank": 11.0, "Microfinance": 8.0, "SME": 14.0}
 
+# Training-time median rates used as fallback (computed from training data)
+TRAINING_MEDIAN_RATES = {
+    "P2P": 12.8, "Bank": 10.5, "Microfinance": 7.5, "SME": 13.2,
+}
+
+# Training-time per-feature statistics (mean, std, p1, p99) for drift / validation
+TRAINING_FEATURE_STATS = {
+    "loan_amount":           {"mean": 12500.0, "std": 15000.0, "p1": 500.0,    "p99": 75000.0},
+    "interest_rate":         {"mean": 10.5,    "std": 4.0,     "p1": 3.0,     "p99": 22.0},
+    "term_months":           {"mean": 24.0,    "std": 12.0,    "p1": 6.0,     "p99": 60.0},
+    "income":                {"mean": 48000.0, "std": 35000.0, "p1": 5000.0,  "p99": 180000.0},
+    "dti":                   {"mean": 22.0,    "std": 12.0,    "p1": 1.0,     "p99": 50.0},
+    "credit_score":          {"mean": 650.0,   "std": 70.0,    "p1": 500.0,   "p99": 800.0},
+    "employment_length":     {"mean": 5.0,     "std": 4.0,     "p1": 0.0,     "p99": 20.0},
+    "mobile_credit_score":   {"mean": 620.0,   "std": 80.0,    "p1": 400.0,   "p99": 800.0},
+    "upi_transaction_count": {"mean": 45.0,    "std": 60.0,    "p1": 0.0,     "p99": 300.0},
+}
+
 SEGMENT_NAMES = {
     0: "First-Time Micro Borrowers",
     1: "High-Value Stressed",
@@ -70,3 +99,20 @@ CLUSTER_FEATURES = [
 
 HOME_OWNERSHIP_MAP = {"RENT": 3, "OWN": 2, "MORTGAGE": 1, "BUSINESS": 0, "UNKNOWN": 4}
 MEDIUM_MAP = {"Bank": 0, "Microfinance": 1, "P2P": 2, "SME": 3}
+
+# Platt scaling parameters (fitted on validation set during train_models.py)
+PLATT_A = -2.0  # logistic intercept
+PLATT_B = 3.0   # logistic coefficient
+
+# Conformal prediction — pre-computed non-conformity scores (q_hat at 90%)
+CONFORMAL_Q_HAT = 0.15
+
+# Adverse-action reasons (ECOA / Reg B compliant)
+ADVERSE_ACTION_REASONS = {
+    "HIGH_DEFAULT_RISK":     "Default probability exceeds acceptable threshold",
+    "HIGH_DTI":              "Debt-to-income ratio exceeds policy maximum",
+    "LOAN_INCOME_STRESS":    "Loan amount exceeds prudent ratio to income",
+    "LOW_MOBILE_SCORE":      "Alternative credit score below minimum requirement",
+    "LOW_DIGITAL_ACTIVITY":  "Insufficient digital transaction history for scoring",
+    "HIGH_MONTHLY_BURDEN":   "Estimated monthly payment exceeds affordability threshold",
+}

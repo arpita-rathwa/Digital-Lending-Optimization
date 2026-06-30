@@ -2,26 +2,25 @@
 
 function getFormData() {
     const termSelect = document.getElementById('f-term-months');
-    const termValue = termSelect ? parseFloat(termSelect.value) : 24;
+    const termValue = termSelect ? parseFloat(termSelect.value) : null;
 
     const empSelect = document.getElementById('f-emp-length');
-    const empValue = empSelect ? parseFloat(empSelect.value) : 4;
+    const empValue = empSelect ? parseFloat(empSelect.value) : null;
 
-    // Mobile score slider is 1-100, map to 300-850
-    const mobileRaw = parseFloat(document.getElementById('f-mobile-score')?.value || 65);
-    const mobileScore = 300 + (mobileRaw / 100) * 550;
+    const mobileRaw = parseFloat(document.getElementById('f-mobile-score')?.value);
+    const mobileScore = mobileRaw ? 300 + (mobileRaw / 100) * 550 : null;
 
     return {
-        loan_amount: parseFloat(document.getElementById('f-loan-amount')?.value || 25000),
+        loan_amount: parseFloat(document.getElementById('f-loan-amount')?.value) || null,
         term_months: termValue,
         lending_medium: document.getElementById('f-lending-medium')?.value || 'Bank',
-        interest_rate: parseFloat(document.getElementById('f-interest-rate')?.value || 12.5) || null,
-        income: parseFloat(document.getElementById('f-income')?.value || 85000),
-        dti: parseFloat(document.getElementById('f-dti')?.value || 28.4),
-        credit_score: parseFloat(document.getElementById('f-credit-score')?.value || 720),
+        interest_rate: parseFloat(document.getElementById('f-interest-rate')?.value) || null,
+        income: parseFloat(document.getElementById('f-income')?.value) || null,
+        dti: parseFloat(document.getElementById('f-dti')?.value) || null,
+        credit_score: parseFloat(document.getElementById('f-credit-score')?.value) || null,
         employment_length: empValue,
         mobile_credit_score: mobileScore,
-        upi_transaction_count: parseInt(document.getElementById('f-upi-count')?.value || 45),
+        upi_transaction_count: parseInt(document.getElementById('f-upi-count')?.value) || null,
         digital_onboarding: document.getElementById('f-digital-onboarding')?.checked ? 1 : 0,
         first_time_borrower: document.getElementById('f-first-timer')?.checked ? 1 : 0,
         urban_flag: document.getElementById('f-urban')?.checked ? 1 : 0,
@@ -29,19 +28,26 @@ function getFormData() {
     };
 }
 
+function showSkeletons() {
+    const resultPanel = document.querySelector('.lg\\:col-span-5');
+    if (!resultPanel) return;
+    resultPanel.querySelectorAll('.skeleton-target').forEach(el => {
+        el.innerHTML = skeletonBox('h-6', 'w-3/4');
+    });
+    document.getElementById('gauge-value').textContent = '—';
+}
+
 function updateGauge(probability) {
-    // Circumference = 2 * pi * 88 = 552.92
     const circumference = 552.92;
     const pct = probability * 100;
-    // Higher prob = more of gauge filled = less offset
-    const offset = circumference - (pct / 100 * circumference);
+    const safetyScore = 100 - pct;
+    const offset = circumference - (safetyScore / 100 * circumference);
 
     const circle = document.getElementById('gauge-circle');
     const valueEl = document.getElementById('gauge-value');
 
     if (circle) {
         circle.setAttribute('stroke-dashoffset', offset.toFixed(2));
-        // Change color based on risk
         if (probability >= 0.65) {
             circle.classList.remove('text-tertiary-container', 'text-yellow-300');
             circle.classList.add('text-error');
@@ -55,12 +61,11 @@ function updateGauge(probability) {
     }
 
     if (valueEl) {
-        valueEl.textContent = (100 - pct).toFixed(0) + '%';
+        valueEl.textContent = safetyScore.toFixed(0) + '%';
     }
 }
 
 function showResults(result) {
-    // Decision badge
     const decisionEl = document.getElementById('result-decision');
     if (decisionEl) {
         const approved = result.approval.approved;
@@ -72,14 +77,11 @@ function showResults(result) {
         }`;
     }
 
-    // Gauge
     updateGauge(result.risk.default_probability);
 
-    // Default probability text
     const probEl = document.getElementById('result-prob');
     if (probEl) probEl.textContent = `Default Probability: ${(result.risk.default_probability * 100).toFixed(1)}%`;
 
-    // Risk tier
     const tierEl = document.getElementById('result-risk-tier');
     if (tierEl) {
         tierEl.textContent = result.risk.risk_tier + ' Risk';
@@ -91,11 +93,9 @@ function showResults(result) {
         tierEl.className = `px-3 py-1 rounded-full font-bold text-body-md border ${colors[result.risk.risk_tier] || colors.Low}`;
     }
 
-    // Expected loss
     const lossEl = document.getElementById('result-expected-loss');
     if (lossEl) lossEl.textContent = formatCurrency(result.risk.expected_loss);
 
-    // Early warning
     const warnEl = document.getElementById('result-warning');
     if (warnEl) {
         const status = result.risk.early_warning;
@@ -110,17 +110,14 @@ function showResults(result) {
         warnEl.className = `font-bold text-body-md ${warnColor}`;
     }
 
-    // Rates
     const recRateEl = document.getElementById('result-rec-rate');
     const currRateEl = document.getElementById('result-curr-rate');
     if (recRateEl) recRateEl.textContent = result.pricing.recommended_rate + '%';
     if (currRateEl) currRateEl.textContent = result.pricing.current_rate + '%';
 
-    // Segment
     const segEl = document.getElementById('result-segment');
     if (segEl) segEl.textContent = result.segment.name;
 
-    // Warning flags
     const flagsEl = document.getElementById('result-flags');
     if (flagsEl) {
         if (!result.risk.warning_flags || result.risk.warning_flags.length === 0) {
@@ -131,6 +128,22 @@ function showResults(result) {
             ).join('');
         }
     }
+
+    // Persist to sessionStorage for navigation resilience
+    try { sessionStorage.setItem('lendiq_last_result', JSON.stringify(result)); } catch (e) { /* noop */ }
+}
+
+function showErrorState(msg) {
+    const warnEl = document.getElementById('result-warning');
+    if (warnEl) {
+        warnEl.textContent = msg;
+        warnEl.className = 'font-bold text-body-md text-error';
+    }
+    const btn = document.getElementById('assess-btn');
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined">bolt</span> ASSESS RISK';
+    }
 }
 
 async function assessRiskHandler() {
@@ -139,9 +152,14 @@ async function assessRiskHandler() {
         btn.disabled = true;
         btn.innerHTML = '<span class="material-symbols-outlined animate-spin">autorenew</span> Analysing...';
     }
+    showSkeletons();
 
     const formData = getFormData();
-    const result = await predictRisk(formData);
+    const result = await fetchWithRetry(`${API_BASE}/predict`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+    }, 2);
 
     if (btn) {
         btn.disabled = false;
@@ -149,20 +167,12 @@ async function assessRiskHandler() {
     }
 
     if (!result) {
-        const warnEl = document.getElementById('result-warning');
-        if (warnEl) {
-            warnEl.textContent = 'Error: Could not reach the API. Is the backend running?';
-            warnEl.className = 'font-bold text-body-md text-error';
-        }
+        showErrorState('⚠ Error: Could not reach the API. <button class="underline ml-2" onclick="assessRiskHandler()">Retry</button>');
         return;
     }
 
     if (result.detail) {
-        const warnEl = document.getElementById('result-warning');
-        if (warnEl) {
-            warnEl.textContent = 'API Error: ' + result.detail;
-            warnEl.className = 'font-bold text-body-md text-error';
-        }
+        showErrorState('API Error: ' + result.detail);
         return;
     }
 
@@ -172,4 +182,55 @@ async function assessRiskHandler() {
 document.addEventListener('DOMContentLoaded', () => {
     const assessBtn = document.getElementById('assess-btn');
     if (assessBtn) assessBtn.addEventListener('click', assessRiskHandler);
+
+    // Restore last result from sessionStorage
+    try {
+        const saved = sessionStorage.getItem('lendiq_last_result');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed.risk && parsed.approval) showResults(parsed);
+        }
+    } catch (e) { /* noop */ }
+
+    // Debounced auto-assessment on input change
+    let debounceTimer;
+    document.querySelectorAll('#f-loan-amount, #f-term-months, #f-lending-medium, #f-interest-rate, #f-income, #f-dti, #f-credit-score, #f-emp-length, #f-mobile-score, #f-upi-count, #f-digital-onboarding, #f-first-timer, #f-urban, #f-home-ownership').forEach(el => {
+        el.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(assessRiskHandler, 600);
+        });
+        el.addEventListener('change', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(assessRiskHandler, 600);
+        });
+    });
+
+    // Clear result placeholders on page load
+    document.getElementById('gauge-value').textContent = '—';
+    document.getElementById('result-decision').innerHTML = '<span class="material-symbols-outlined mr-2">hourglass_empty</span> PENDING';
+    document.getElementById('result-prob').textContent = 'Default Probability: awaiting input';
+    document.getElementById('result-risk-tier').textContent = '—';
+    document.getElementById('result-expected-loss').textContent = '—';
+    document.getElementById('result-rec-rate').textContent = '—';
+    document.getElementById('result-curr-rate').textContent = '—';
+    document.getElementById('result-segment').textContent = '—';
+    document.getElementById('result-flags').innerHTML = '<div class="bg-surface-container text-on-surface-variant px-3 py-1 rounded-full text-label-sm font-bold">Enter borrower details to assess</div>';
+    document.getElementById('result-warning').textContent = 'Awaiting assessment';
+
+    // Scorer search bar (filter result panel)
+    const scorerSearch = document.getElementById('scorer-search');
+    if (scorerSearch) {
+        let searchTimer;
+        scorerSearch.addEventListener('input', () => {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                const q = scorerSearch.value.toLowerCase();
+                document.querySelectorAll('.lg\\:col-span-5 .skeleton-target, .lg\\:col-span-5 p, .lg\\:col-span-5 .flex-wrap').forEach(el => {
+                    if (!q) { el.style.opacity = '1'; return; }
+                    const text = el.textContent.toLowerCase();
+                    el.style.opacity = text.includes(q) ? '1' : '0.3';
+                });
+            }, 200);
+        });
+    }
 });
