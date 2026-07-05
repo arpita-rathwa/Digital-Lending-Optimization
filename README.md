@@ -417,8 +417,3 @@ Digital-Lending-Optimization/
 - ~~Add a `Dockerfile` for the backend~~ — **DONE**
 - Add a `MODEL_CARD.md` documenting training data, intended use, and fairness considerations
 - ~~CI via GitHub Actions (lint + tests on every PR)~~ — **DONE**
-# trigger
-#   t r i g g e r  
- #   t r i g g e r   C I R e c o n  
- #   t r i g g e r   C I R e c o n   v 3  
- 
