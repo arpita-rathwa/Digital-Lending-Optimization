@@ -2,8 +2,7 @@ name: CIRecon
 
 on:
   push:
-    paths:
-      - '.github/workflows/**'
+    branches: [main]
 
 jobs:
   cirecon:
@@ -12,10 +11,6 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - name: Debug workspace
-        run: |
-          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
-          ls -la $GITHUB_WORKSPACE/.github/workflows/
       - uses: arpita-rathwa/CIRecon@v1
         with:
           anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
