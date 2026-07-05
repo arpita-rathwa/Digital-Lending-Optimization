@@ -1,0 +1,15 @@
+name: CIRecon
+
+on:
+  push:
+    paths:
+      - '.github/workflows/**'
+
+jobs:
+  cirecon:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: arpita-rathwa/CIRecon@v1
