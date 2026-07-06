@@ -14,5 +14,5 @@ jobs:
       - uses: actions/checkout@v4
       - uses: arpita-rathwa/CIRecon@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.CIRECON_PAT }}
           anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
